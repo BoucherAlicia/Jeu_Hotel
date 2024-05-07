@@ -1,38 +1,26 @@
-// Hotel.h
+#ifndef HOTEL_HPP
+#define HOTEL_HPP
 
-#ifndef HOTEL_H
-#define HOTEL_H
+#include "propriete.hpp"
+#include <iostream>
 
-#include <vector>
-#include <string>
-
-// Déclaration de la classe Hotel
 class Hotel {
-public:
-    // Constructeur
-    Hotel();
-
-    // Destructeur
-    ~Hotel();
-
-    // Méthode pour initialiser l'hôtel
-    void initialize();
-
-    // Méthode pour afficher l'état de l'hôtel
-    void displayStatus() const;
-
-    // Autres méthodes pour la logique du jeu...
-
 private:
-    // Définition d'une structure pour une chambre d'hôtel
-    struct Room {
-        int roomNumber;
-        std::string guestName;
-        bool occupied;
-    };
+    std::string nom;
+    int prixTerrain;
+    int prixHotel1;
+    int prixHotel2;
+    int prixEentree;
 
-    // Vecteur pour stocker les chambres de l'hôtel
-    std::vector<Room> rooms;
+public:
+    Hotel(const std::string& nom, int prixTerrain, int prixHotel1, int prixHotel2, int prixEentree)
+        : prixTerrain(prixTerrain), prixHotel1(prixHotel1), prixHotel2(prixHotel2), prixEentree(prixEentree) {}
+
+    // Méthode pour acheter la propriété
+    void acheter() {
+        std::cout << "Achat de la propriete : " << nom << std::endl;
+        // Ajoutez ici la logique pour l'achat de la propriété
+    }
 };
 
-#endif // HOTEL_H
+#endif // HOTEL_HPP

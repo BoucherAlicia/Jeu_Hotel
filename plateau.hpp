@@ -28,6 +28,7 @@ private:
     void renderTrack();
     void renderHotels();
     void renderTable();
+    void renderCases();
 };
 
 #endif // RENDERER_HPP

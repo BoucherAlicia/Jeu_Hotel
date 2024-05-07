@@ -1,7 +1,19 @@
 #include <SDL2/SDL.h>
 #include "plateau.hpp"
+#include "hotel.hpp"
+#include "joueur.hpp"
+#include "case.hpp"
+
+
 
 int main() {
+    int argentInitial = 25000;
+    // Création des joueurs
+    Joueur joueur1("Joueur 1", argentInitial);
+    Joueur joueur2("Joueur 2", argentInitial);
+
+    
+
     // Initialize SDL
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         // Gestion d'erreur si l'initialisation de SDL échoue
@@ -31,6 +43,9 @@ int main() {
     // Create a Renderer instance
     Renderer gameRenderer(renderer, 800, 600);
 
+    
+
+
     // Main loop
     bool quit = false;
     while (!quit) {
@@ -44,7 +59,8 @@ int main() {
         // Render the game
         gameRenderer.renderGame();
     }
-
+    
+    
     // Clean up
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);

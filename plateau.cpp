@@ -1,6 +1,9 @@
 #include "plateau.hpp"
+#include "case.hpp"
+#include "de_special.hpp"
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
+#include <sstream>
 
 Renderer::Renderer(SDL_Renderer* renderer, int width, int height)
     : m_renderer(renderer), m_width(width), m_height(height) {
@@ -27,12 +30,13 @@ Renderer::~Renderer() {
 
 void Renderer::initTrackRects() {
     // Exemple de circuit rectangulaire simple
+    
     // Top
     m_trackRects.push_back({150, 100, 400, 50});
     // Bottom
     m_trackRects.push_back({150, 450, 400, 50});
     // Right
-    m_trackRects.push_back({550, 100, 50, 400});
+    m_trackRects.push_back({550, 100, 50, 400});    
     // Left
     m_trackRects.push_back({150, 100, 50, 400});
 
@@ -99,6 +103,9 @@ void Renderer::renderGame() {
 
     // Rendu du tableau
     renderTable();
+    
+    // Rendu des cases
+    renderCases();
 
     // Mettre à jour l'affichage
     SDL_RenderPresent(m_renderer);
@@ -107,28 +114,59 @@ void Renderer::renderGame() {
 void Renderer::renderTrack() {
     // Rendu du circuit
     SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255); // Noir
-    for (const auto& rect : m_trackRects) {
-        SDL_RenderFillRect(m_renderer, &rect);
+    for (const auto& rect : m_trackRects) 
+    {
+       SDL_RenderFillRect(m_renderer, &rect);
     }
-    // Rendu de la ligne horizontale séparant les rectangles
-    // Lignes blanches à l'intérieur des rectangles noirs
-    SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255); // Blanc
-    // Rectangle du haut
-    for (int i = 1; i < m_trackRects[0].w / 50; ++i) {
-        SDL_RenderDrawLine(m_renderer, m_trackRects[0].x + 50 * i, m_trackRects[0].y, m_trackRects[0].x + 50 * i, m_trackRects[0].y + m_trackRects[0].h);
-    }
-    // Rectangle du bas
-    for (int i = 1; i < m_trackRects[1].w / 50; ++i) {
-        SDL_RenderDrawLine(m_renderer, m_trackRects[1].x + 50 * i, m_trackRects[1].y, m_trackRects[1].x + 50 * i, m_trackRects[1].y + m_trackRects[1].h);
-    }
-    // Rectangle de droite
-    for (int i = 1; i < m_trackRects[2].h / 50; ++i) {
-        SDL_RenderDrawLine(m_renderer, m_trackRects[2].x, m_trackRects[2].y + 50 * i, m_trackRects[2].x + m_trackRects[2].w, m_trackRects[2].y + 50 * i);
-    }
-    // Rectangle de gauche
-    for (int i = 1; i < m_trackRects[3].h / 50; ++i) {
-        SDL_RenderDrawLine(m_renderer, m_trackRects[3].x, m_trackRects[3].y + 50 * i, m_trackRects[3].x + m_trackRects[3].w, m_trackRects[3].y + 50 * i);
-    }
+    /*int caseNumber = 1; // Numéro de la première case
+    for (const auto& rect : m_trackRects) 
+    {
+       SDL_RenderFillRect(m_renderer, &rect);
+        // Division du rectangle en cases individuelles
+        int numHorizontal = rect.w / 50; // Nombre de cases horizontales
+        int numVertical = rect.h / 50;   // Nombre de cases verticales
+
+        // Rendu des numéros de case
+        for (int j = numVertical - 1; j >= 0; --j) { // Parcours de bas en haut
+            for (int i = 0; i < numHorizontal; ++i) { // Parcours de gauche à droite
+                // Position du numéro de case (en haut à gauche de chaque case)
+                int caseX = rect.x + i * 50 + 5; // Marge de 5 pixels
+                int caseY = rect.y + j * 50 + 5; // Marge de 5 pixels
+
+                // Affichage du numéro de case
+                std::string caseNumberStr = std::to_string(caseNumber);
+                SDL_Color textColor = {255, 255, 255, 255}; // Blanc pour le texte
+                SDL_Surface* textSurface = TTF_RenderText_Solid(m_font, caseNumberStr.c_str(), textColor);
+                SDL_Texture* textTexture = SDL_CreateTextureFromSurface(m_renderer, textSurface);
+                SDL_Rect textRect = {caseX, caseY, textSurface->w, textSurface->h};
+                SDL_RenderCopy(m_renderer, textTexture, NULL, &textRect);
+                SDL_FreeSurface(textSurface);
+                SDL_DestroyTexture(textTexture);
+
+                // Incrémentation du numéro de case
+                ++caseNumber;
+            }
+        }
+    }*/
+    // // Rendu de la ligne horizontale séparant les rectangles
+    // // Lignes blanches à l'intérieur des rectangles noirs
+    // SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255); // Blanc
+    // // Rectangle du haut
+    // for (int i = 1; i < m_trackRects[0].w / 50; ++i) {
+    //     SDL_RenderDrawLine(m_renderer, m_trackRects[0].x + 50 * i, m_trackRects[0].y, m_trackRects[0].x + 50 * i, m_trackRects[0].y + m_trackRects[0].h);
+    // }
+    // // Rectangle du bas
+    // for (int i = 1; i < m_trackRects[1].w / 50; ++i) {
+    //     SDL_RenderDrawLine(m_renderer, m_trackRects[1].x + 50 * i, m_trackRects[1].y, m_trackRects[1].x + 50 * i, m_trackRects[1].y + m_trackRects[1].h);
+    // }
+    // // Rectangle de droite
+    // for (int i = 1; i < m_trackRects[2].h / 50; ++i) {
+    //     SDL_RenderDrawLine(m_renderer, m_trackRects[2].x, m_trackRects[2].y + 50 * i, m_trackRects[2].x + m_trackRects[2].w, m_trackRects[2].y + 50 * i);
+    // }
+    // // Rectangle de gauche
+    // for (int i = 1; i < m_trackRects[3].h / 50; ++i) {
+    //     SDL_RenderDrawLine(m_renderer, m_trackRects[3].x, m_trackRects[3].y + 50 * i, m_trackRects[3].x + m_trackRects[3].w, m_trackRects[3].y + 50 * i);
+    // }
 
 
     // Rendu du rectangle bleu (DEPART) en bas à gauche
@@ -230,6 +268,8 @@ void Renderer::renderHotels() {
 }
 
 
+int resultat_de = -1;
+int resultat_de_special = -1;
 void Renderer::renderTable() {
     // Tableau avec 3 lignes et 6 colonnes
     // Définition des textes à afficher dans chaque cellule
@@ -304,14 +344,7 @@ void Renderer::renderTable() {
     SDL_FreeSurface(textSurface);
     SDL_DestroyTexture(textTexture);
 
-    // Texte "Résultat du dé : "
-    textSurface = TTF_RenderText_Solid(m_font, "Resultat du de : ", {0, 0, 0, 255}); // Noir
-    textTexture = SDL_CreateTextureFromSurface(m_renderer, textSurface);
-    textRect = {800 + buttonRect.w + 20, 10 + (buttonRect.h - textSurface->h) / 2, textSurface->w, textSurface->h};
-    SDL_RenderCopy(m_renderer, textTexture, NULL, &textRect);
-    SDL_FreeSurface(textSurface);
-    SDL_DestroyTexture(textTexture);
-
+    
     // Jouer le dé spécial
     SDL_SetRenderDrawColor(m_renderer, 173, 216, 230, 255); // Bleu clair
     buttonRect = {800, 100, 150, 50}; // Rectangle autour du texte "Jouer le dé"
@@ -324,8 +357,58 @@ void Renderer::renderTable() {
     SDL_FreeSurface(textSurface);
     SDL_DestroyTexture(textTexture);
 
+    /*****************CLIC SOURIS**************/
+    DeNormal deNormal;
+    DeSpecial deSpecial;
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+    // Vérifier si le clic de la souris se produit dans la zone "Jouer le dé"
+        if (event.type == SDL_MOUSEBUTTONDOWN) {
+            int mouseX, mouseY;
+            SDL_GetMouseState(&mouseX, &mouseY);
+            if (mouseX >= 800 && mouseX <= 950 && mouseY >= 10 && mouseY <= 60) {
+                // Clic détecté dans la zone "Jouer le dé", donc lancer le dé
+                resultat_de = deNormal.lanceDe();
+            }
+            if (mouseX >= 800 && mouseX <= 950 && mouseY >= 100 && mouseY <= 150) {
+                // Clic détecté dans la zone "Jouer le dé spécial", donc lancer le dé spécial
+                resultat_de_special = deSpecial.lanceDe();
+            }
+        }
+    }
     // Texte "Résultat du dé : "
-    textSurface = TTF_RenderText_Solid(m_font, "Resultat du de special : ", {0, 0, 0, 255}); // Noir
+    std::string resultat_str = std::to_string(resultat_de);
+    textSurface = TTF_RenderText_Solid(m_font, resultat_str.c_str(), {0, 0, 0, 255}); // Noir
+    if (resultat_de == -1)textSurface = TTF_RenderText_Solid(m_font, " ", {0, 0, 0, 255}); // Noir
+    textTexture = SDL_CreateTextureFromSurface(m_renderer, textSurface);
+    textRect = {800 + buttonRect.w + 20, 10 + (buttonRect.h - textSurface->h) / 2, textSurface->w, textSurface->h};
+    SDL_RenderCopy(m_renderer, textTexture, NULL, &textRect);
+    SDL_FreeSurface(textSurface);
+    SDL_DestroyTexture(textTexture);
+
+
+    // Texte "Résultat du dé special : "
+    std::string special_result;
+    switch(resultat_de_special) {
+        case 0:
+            special_result = "rouge";
+            break;
+        case 1:
+        case 2:
+        case 3:
+            special_result = "vert";
+            break;
+        case 4:
+            special_result = "H (gratuit)";
+            break;
+        case 5:
+            special_result = "2D (double)";
+            break;
+        default:
+            special_result = " ";
+    }
+
+    textSurface = TTF_RenderText_Solid(m_font, special_result.c_str(), {0, 0, 0, 255}); // Noir
     textTexture = SDL_CreateTextureFromSurface(m_renderer, textSurface);
     textRect = {800 + buttonRect.w + 20, 100 + (buttonRect.h - textSurface->h) / 2, textSurface->w, textSurface->h};
     SDL_RenderCopy(m_renderer, textTexture, NULL, &textRect);
@@ -443,4 +526,43 @@ void Renderer::renderTable() {
     SDL_RenderCopy(m_renderer, textTexture, NULL, &textRect3);
     SDL_FreeSurface(textSurface);
     SDL_DestroyTexture(textTexture);
+}
+
+
+std::vector<Case> creerCases()
+{
+    // Vecteur pour stocker les cases
+    std::vector<Case> cases;
+
+    // Ajouter les 30 cases avec des coordonnées spécifiques
+    for (int i = 1; i <= 30; ++i) {
+        int x, y;
+        // Définir les coordonnées en fonction du numéro de la case
+        if (i <= 8) {
+            x = 150;
+            y = 500 - (i * 50);
+        } else if (i <= 16) {
+            x = 150 + ((i - 8) * 50);
+            y = 100;
+        } else if (i <= 23) {
+            x = 550;
+            y = 100 + ((i - 16) * 50);
+        } else {
+            x = 550 - ((i - 23) * 50);
+            y = 450;
+        }
+        // Créer la case et l'ajouter au vecteur
+        cases.push_back(Case(i, x, y));
+    }
+    return cases;
+}
+
+void Renderer::renderCases() 
+{
+    // Create cases
+    std::vector<Case> cases = creerCases();
+     // Afficher les informations de chaque case
+    for (const auto& cas : cases) {
+        cas.display(m_renderer, m_font);
+    }
 }
