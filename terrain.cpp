@@ -1,12 +1,7 @@
 // terrain.cpp
 
 #include "terrain.hpp"
-#include "case.hpp"
-#include "plateau.hpp"
 
-
-
-//Terrain::Terrain(std::string nom, int prix) : m_nom(nom), m_prix(prix), m_estOccupe(false), m_estConstruit(false) {}
 Terrain::Terrain(const std::string& nom, int prix)
     : m_nom(nom), m_prix(prix), m_estOccupe(false), m_estConstruit(false) {}
 
@@ -17,71 +12,66 @@ Terrain::Terrain() {
     terrains.emplace_back("Hotel4", 3000);
 }
 
-void Terrain::occupe(int numeroCase) {
-    if (numeroCase < 1) {
+void Terrain::afficherInfo() const {
+        std::cout << "Terrain : " << m_nom << ", Prix : " << m_prix << ", Occupé : " << (m_estOccupe ? "Oui" : "Non") << ", Construit : " << (m_estConstruit ? "Oui" : "Non") << std::endl;
+}
+
+int Terrain::getTerrainIndex(int numeroCase) const {
+    if (numeroCase < 1 || numeroCase > 27) {
+        return -1;
+    } else if (numeroCase >= 1 && numeroCase < 4) {
+        return 0;
+    } else if (numeroCase >= 5 && numeroCase < 12) {
+        return 1;
+    } else if (numeroCase >= 13 && numeroCase < 20) {
+        return 2;
+    } else if (numeroCase >= 20 && numeroCase < 27) {
+        return 3;
+    }
+    return -1;
+}
+
+void Terrain::updateTerrainStatus(int numeroCase, bool estOccupe) {
+    int terrainIndex = getTerrainIndex(numeroCase);
+    if (terrainIndex != -1) {
+        terrains[terrainIndex].m_estOccupe = estOccupe;
+    } else {
         std::cerr << "Erreur : numeroCase invalide." << std::endl;
-        return;
     }
-    else if (numeroCase >= 1 && numeroCase < 4) {
-        terrains[0].m_estOccupe = true;
-    }
-    else if (numeroCase >= 5 && numeroCase < 12) {
-        terrains[1].m_estOccupe = true;
-    } 
-    else if (numeroCase >= 13 && numeroCase < 20) {
-        terrains[2].m_estOccupe = true;
-    }
-    else if (numeroCase >= 20 && numeroCase < 27) {
-        terrains[3].m_estOccupe = true;
-    }   
+}
+
+void Terrain::occupe(int numeroCase) {
+    updateTerrainStatus(numeroCase, true);
 }
 
 void Terrain::construit(int numeroCase) {
-    if (numeroCase < 1) {
-            std::cerr << "Erreur : numeroCase invalide." << std::endl;
-            return;
-        }
-        else if (numeroCase >= 1 && numeroCase < 4) {
-            terrains[0].m_estConstruit = true;
-        }
-        else if (numeroCase >= 5 && numeroCase < 12) {
-            terrains[1].m_estConstruit = true;
-        } 
-        else if (numeroCase >= 13 && numeroCase < 20) {
-            terrains[2].m_estConstruit = true;
-        }
-        else if (numeroCase >= 20 && numeroCase < 27) {
-            terrains[3].m_estConstruit = true;
-        }   
+    updateTerrainStatus(numeroCase, true);
 }
 
-std::string Terrain::getNom() const { //A CONTINUER SELON LE NUMERO DE CASE
-    return m_nom;
+std::string Terrain::getNom(int numeroCase) const {
+    int terrainIndex = getTerrainIndex(numeroCase);
+    if (terrainIndex != -1) {
+        return terrains[terrainIndex].m_nom;
+    } else {
+        return "Terrain inexistant";
+    }
 }
 
-int Terrain::getPrix() const { //A CONTINUER SELON LE NUMERO DE CASE
-    return m_prix;
-}
-
-void Terrain::afficherInfo() const {
-    std::cout << "Terrain : " << m_nom << ", Prix : " << m_prix << ", Occupé : " << (m_estOccupe ? "Oui" : "Non") << ", Construit : " << (m_estConstruit ? "Oui" : "Non") << std::endl;
+int Terrain::getPrix(int numeroCase) const {
+    int terrainIndex = getTerrainIndex(numeroCase);
+    if (terrainIndex != -1) {
+        return terrains[terrainIndex].m_prix;
+    } else {
+        return -1; // Prix invalide
+    }
 }
 
 const Terrain* Terrain::getTerrainAdjacent(int numeroCase) const {
-    if (numeroCase < 1) {
-        return nullptr; // Aucune case à gauche de la première case
+    int terrainIndex = getTerrainIndex(numeroCase);
+    if (terrainIndex != -1) {
+        terrains[terrainIndex].afficherInfo();
+    } else {
+        std::cerr << "Erreur : numeroCase invalide." << std::endl;
     }
-    else if (numeroCase >= 1 && numeroCase < 4) {
-        terrains[0].afficherInfo();
-    }
-    else if (numeroCase >= 5 && numeroCase < 12) {
-        terrains[1].afficherInfo();
-    } 
-    else if (numeroCase >= 13 && numeroCase < 20) {
-        terrains[2].afficherInfo();
-    }
-    else if (numeroCase >= 20 && numeroCase < 27) {
-        terrains[3].afficherInfo();
-    }   
-    return nullptr; // Aucun terrain correspondant trouvé
+    return nullptr;
 }
