@@ -1,6 +1,7 @@
+// main.cpp
 #include <SDL2/SDL.h>
 #include "plateau.hpp"
-#include "hotel.hpp"
+#include "terrain.hpp"
 #include "joueur.hpp"
 #include "case.hpp"
 
@@ -11,9 +12,16 @@ int main() {
     // Création des joueurs
     Joueur joueur1("Joueur 1", argentInitial);
     Joueur joueur2("Joueur 2", argentInitial);
-
-    
-
+/*---------------------------------------------------------------------------------------------------------------------*/
+    //Tests terrain.cpp
+    Terrain terrain;
+    int numerocase = 1;
+    terrain.getTerrainAdjacent(numerocase);
+    terrain.occupe(numerocase);
+    terrain.getTerrainAdjacent(numerocase);
+    numerocase = 7;
+    terrain.getTerrainAdjacent(numerocase);
+/*---------------------------------------------------------------------------------------------------------------------*/
     // Initialize SDL
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         // Gestion d'erreur si l'initialisation de SDL échoue
@@ -65,6 +73,7 @@ int main() {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
+
 
     return 0;
 }

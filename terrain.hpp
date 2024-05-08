@@ -1,26 +1,43 @@
+// terrain.hpp
 #ifndef TERRAIN_HPP
 #define TERRAIN_HPP
 
-#include "propriete.hpp"
 #include <iostream>
+#include <string>
+#include <vector>
 
-class Hotel {
-private:
-    std::string nom;
-    int prixTerrain;
-    int prixHotel1;
-    int prixHotel2;
-    int prixEentree;
+class Terrain {
+    protected:
+        std::string m_nom; // Nom du terrain
+        int m_prix; // Prix d'achat du terrain
+        bool m_estConstruit; // Indique si le terrain est construit
+        bool m_estOccupe; // Indique si le terrain est occupé par un joueur
+        std::vector<Terrain> terrains;
+    
 
-public:
-    Hotel(const std::string& nom, int prixTerrain, int prixHotel1, int prixHotel2, int prixEentree)
-        : prixTerrain(prixTerrain), prixHotel1(prixHotel1), prixHotel2(prixHotel2), prixEentree(prixEentree) {}
+    public:
+        // Constructeur
+        Terrain();
 
-    // Méthode pour acheter la propriété
-    void acheter() {
-        std::cout << "Achat de la propriete : " << nom << std::endl;
-        // Ajoutez ici la logique pour l'achat de la propriété
-    }
+        // Constructeur avec nom et prix
+        Terrain(const std::string& nom, int prix);
+
+        // Getters
+        std::string getNom() const;
+        int getPrix() const;
+        bool estConstruit() const;
+        bool estOccupe() const;
+
+        // Setters
+        void setEstConstruit(bool estConstruit);
+        void setEstOccupe(bool estOccupe);
+
+        // Autres méthodes
+        void occupe(int numeroCase);
+        void construit(int numeroCase);
+        void afficherInfo() const;
+        const Terrain* getTerrainAdjacent(int numeroCase) const;
+
 };
 
-#endif // HOTEL_HPP
+#endif

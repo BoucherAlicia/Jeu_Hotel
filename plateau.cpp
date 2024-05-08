@@ -1,3 +1,4 @@
+// plateau.cpp
 #include "plateau.hpp"
 #include "case.hpp"
 #include "de_special.hpp"
@@ -73,6 +74,14 @@ void Renderer::initTrackRects() {
 
 }
 
+void Renderer::initTerrains(){
+        // Initialisation des terrains
+    m_terrains.push_back(Terrain("Hôtel1", 1000));
+    m_terrains.push_back(Terrain("Hôtel2", 1500));
+    m_terrains.push_back(Terrain("Hôtel3", 2000));
+    m_terrains.push_back(Terrain("Hôtel4", 3000));
+}
+
 void Renderer::initHotelNames() {
     // Initialisation des noms d'hôtels pour les emplacements autour du circuit
     m_hotelNames.push_back("Hotel1");
@@ -118,56 +127,7 @@ void Renderer::renderTrack() {
     {
        SDL_RenderFillRect(m_renderer, &rect);
     }
-    /*int caseNumber = 1; // Numéro de la première case
-    for (const auto& rect : m_trackRects) 
-    {
-       SDL_RenderFillRect(m_renderer, &rect);
-        // Division du rectangle en cases individuelles
-        int numHorizontal = rect.w / 50; // Nombre de cases horizontales
-        int numVertical = rect.h / 50;   // Nombre de cases verticales
-
-        // Rendu des numéros de case
-        for (int j = numVertical - 1; j >= 0; --j) { // Parcours de bas en haut
-            for (int i = 0; i < numHorizontal; ++i) { // Parcours de gauche à droite
-                // Position du numéro de case (en haut à gauche de chaque case)
-                int caseX = rect.x + i * 50 + 5; // Marge de 5 pixels
-                int caseY = rect.y + j * 50 + 5; // Marge de 5 pixels
-
-                // Affichage du numéro de case
-                std::string caseNumberStr = std::to_string(caseNumber);
-                SDL_Color textColor = {255, 255, 255, 255}; // Blanc pour le texte
-                SDL_Surface* textSurface = TTF_RenderText_Solid(m_font, caseNumberStr.c_str(), textColor);
-                SDL_Texture* textTexture = SDL_CreateTextureFromSurface(m_renderer, textSurface);
-                SDL_Rect textRect = {caseX, caseY, textSurface->w, textSurface->h};
-                SDL_RenderCopy(m_renderer, textTexture, NULL, &textRect);
-                SDL_FreeSurface(textSurface);
-                SDL_DestroyTexture(textTexture);
-
-                // Incrémentation du numéro de case
-                ++caseNumber;
-            }
-        }
-    }*/
-    // // Rendu de la ligne horizontale séparant les rectangles
-    // // Lignes blanches à l'intérieur des rectangles noirs
-    // SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255); // Blanc
-    // // Rectangle du haut
-    // for (int i = 1; i < m_trackRects[0].w / 50; ++i) {
-    //     SDL_RenderDrawLine(m_renderer, m_trackRects[0].x + 50 * i, m_trackRects[0].y, m_trackRects[0].x + 50 * i, m_trackRects[0].y + m_trackRects[0].h);
-    // }
-    // // Rectangle du bas
-    // for (int i = 1; i < m_trackRects[1].w / 50; ++i) {
-    //     SDL_RenderDrawLine(m_renderer, m_trackRects[1].x + 50 * i, m_trackRects[1].y, m_trackRects[1].x + 50 * i, m_trackRects[1].y + m_trackRects[1].h);
-    // }
-    // // Rectangle de droite
-    // for (int i = 1; i < m_trackRects[2].h / 50; ++i) {
-    //     SDL_RenderDrawLine(m_renderer, m_trackRects[2].x, m_trackRects[2].y + 50 * i, m_trackRects[2].x + m_trackRects[2].w, m_trackRects[2].y + 50 * i);
-    // }
-    // // Rectangle de gauche
-    // for (int i = 1; i < m_trackRects[3].h / 50; ++i) {
-    //     SDL_RenderDrawLine(m_renderer, m_trackRects[3].x, m_trackRects[3].y + 50 * i, m_trackRects[3].x + m_trackRects[3].w, m_trackRects[3].y + 50 * i);
-    // }
-
+   
 
     // Rendu du rectangle bleu (DEPART) en bas à gauche
     SDL_Rect startRect = {150, 450, 50, 50};
