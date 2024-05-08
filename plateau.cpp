@@ -74,13 +74,6 @@ void Renderer::initTrackRects() {
 
 }
 
-void Renderer::initTerrains(){
-        // Initialisation des terrains
-    m_terrains.push_back(Terrain("Hôtel1", 1000));
-    m_terrains.push_back(Terrain("Hôtel2", 1500));
-    m_terrains.push_back(Terrain("Hôtel3", 2000));
-    m_terrains.push_back(Terrain("Hôtel4", 3000));
-}
 
 void Renderer::initHotelNames() {
     // Initialisation des noms d'hôtels pour les emplacements autour du circuit

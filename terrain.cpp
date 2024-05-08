@@ -2,21 +2,21 @@
 
 #include "terrain.hpp"
 
-Terrain::Terrain(const std::string& nom, int prix)
-    : m_nom(nom), m_prix(prix), m_estOccupe(false), m_estConstruit(false) {}
+Terrain::Terrain(const std::string& nom, int prix, const std::string& propriete)
+    : m_nom(nom), m_prix(prix), m_propriete(propriete), m_estOccupe(false), m_estConstruit(false) {}
 
-Terrain::Terrain() {
-    terrains.emplace_back("Hotel1", 1000);
-    terrains.emplace_back("Hotel2", 1500);
-    terrains.emplace_back("Hotel3", 2000);
-    terrains.emplace_back("Hotel4", 3000);
+Terrain::Terrain() { //constructeur par defaut
+    terrains.emplace_back("Hotel1", 1000, "Personne");
+    terrains.emplace_back("Hotel2", 1500, "Personne");
+    terrains.emplace_back("Hotel3", 2000, "Personne");
+    terrains.emplace_back("Hotel4", 3000, "Personne");
 }
 
 void Terrain::afficherInfo() const {
-        std::cout << "Terrain : " << m_nom << ", Prix : " << m_prix << ", Occupé : " << (m_estOccupe ? "Oui" : "Non") << ", Construit : " << (m_estConstruit ? "Oui" : "Non") << std::endl;
+        std::cout << "Terrain : " << m_nom << ", Prix : " << m_prix << ", Propriété :" << m_propriete << ", Occupé : " << (m_estOccupe ? "Oui" : "Non") << ", Construit : " << (m_estConstruit ? "Oui" : "Non") << std::endl;
 }
 
-int Terrain::getTerrainIndex(int numeroCase) const {
+int Terrain::getTerrainIndex(int numeroCase) const { //pour eviter les repetition du code
     if (numeroCase < 1 || numeroCase > 27) {
         return -1;
     } else if (numeroCase >= 1 && numeroCase < 4) {
@@ -31,10 +31,11 @@ int Terrain::getTerrainIndex(int numeroCase) const {
     return -1;
 }
 
-void Terrain::updateTerrainStatus(int numeroCase, bool estOccupe) {
-    int terrainIndex = getTerrainIndex(numeroCase);
+void Terrain::updateTerrainStatus(int numeroCase, bool estOccupe) { //pour mettre a jour si le terrain est occupé ou non
+    int terrainIndex = getTerrainIndex(numeroCase);                 
     if (terrainIndex != -1) {
         terrains[terrainIndex].m_estOccupe = estOccupe;
+        terrains[terrainIndex].m_propriete = "Joueur1"; //A MODIFIER POUR AFFICHER LE NOM DU JOUEUR QUI OCCUPERA LE TERRAIN
     } else {
         std::cerr << "Erreur : numeroCase invalide." << std::endl;
     }
