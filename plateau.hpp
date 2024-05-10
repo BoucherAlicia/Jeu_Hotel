@@ -6,12 +6,18 @@
 #include <vector>
 #include <string>
 
+#include <SDL2/SDL_image.h>
+#include <sstream>
+
+#include "case.hpp"
+#include "jeu.cpp"
+
 class Renderer {
 public:
     Renderer(SDL_Renderer* renderer, int width, int height);
     ~Renderer();
 
-    void renderGame();
+    void renderGame(const Joueur& joueurs);
 
 private:
     SDL_Renderer* m_renderer;
@@ -27,8 +33,10 @@ private:
     void initHotelNames();
     void renderTrack();
     void renderHotels();
+    void renderDe();
     void renderTable();
     void renderCases();
+    void afficherPion(const Joueur& joueurs) const;
 };
 
 #endif // RENDERER_HPP

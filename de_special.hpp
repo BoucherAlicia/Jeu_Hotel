@@ -1,3 +1,6 @@
+#ifndef DESPECIAL_HPP
+#define DESPECIAL_HPP
+
 #include "de_normal.hpp" 
 
 
@@ -16,3 +19,4 @@ public:
         return index;
     }
 };
+#endif

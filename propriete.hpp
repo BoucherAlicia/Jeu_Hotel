@@ -1,3 +1,6 @@
+#ifndef PROPRIETE_HPP
+#define PROPRIETE_HPP
+
 #include <string>
 
 class Propriete {
@@ -15,3 +18,4 @@ public:
     const std::string& getNom() const { return nom; }
     int getPrix() const { return prix; }
 };
+#endif

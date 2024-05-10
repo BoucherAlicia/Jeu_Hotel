@@ -23,4 +23,4 @@ public:
     }
 };
 
-#endif // HOTEL_HPP
+#endif

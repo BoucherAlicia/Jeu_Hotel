@@ -1,3 +1,6 @@
+#ifndef OBJET_HPP
+#define OBJET_HPP
+
 #include <string>
 
 class Objet {
@@ -16,3 +19,4 @@ protected:
     std::string nom;
     int valeur;
 };
+#endif
