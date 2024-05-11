@@ -17,7 +17,8 @@ public:
     Renderer(SDL_Renderer* renderer, int width, int height);
     ~Renderer();
 
-    void renderGame(const Joueur& joueurs);
+    void renderGame(const Joueur& joueurs, const std::vector<std::string>& phrases, int resultat_de, int resultat_de_special);
+ 
 
 private:
     SDL_Renderer* m_renderer;
@@ -33,10 +34,11 @@ private:
     void initHotelNames();
     void renderTrack();
     void renderHotels();
-    void renderDe();
+    void renderDe(int resultat_de, int resultat_de_special);
     void renderTable();
     void renderCases();
     void afficherPion(const Joueur& joueurs) const;
+    void renderTerminal(const std::vector<std::string>& phrases);
 };
 
 #endif // RENDERER_HPP

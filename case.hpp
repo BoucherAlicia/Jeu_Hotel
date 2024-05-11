@@ -10,11 +10,10 @@
 // Classe représentant une case sur le plateau
 class Case {
 private:
-    int number[29]; // Numéro de la case
-    int x[29]; // Coordonnée x
-    int y[29]; // Coordonnée y
+    int number[30]; // Numéro de la case
+    int x[30]; // Coordonnée x
+    int y[30]; // Coordonnée y
 
-    int occupyingPlayer[29]; // Joueur occupant la case (0 si non occupée)
     static const int width = 50;
     static const int height = 50;
 

@@ -1,7 +1,10 @@
 #include "plateau.hpp"
 
-Renderer::Renderer(SDL_Renderer* renderer, int width, int height)
-    : m_renderer(renderer), m_width(width), m_height(height) {
+#include <chrono>
+#include <thread>
+
+Renderer::Renderer(SDL_Renderer* m_renderer, int width, int height)
+    : m_renderer(m_renderer), m_width(width), m_height(height) {
     if (TTF_Init() == -1) {
         printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
     }
@@ -85,7 +88,7 @@ void Renderer::initHotelNames() {
     m_hotelNames.push_back("Hotel Deluxe BOUCHER-ELMORR");
 }
 
-void Renderer::renderGame(const Joueur& joueurs) {
+void Renderer::renderGame(const Joueur& joueurs, const std::vector<std::string>& phrases, int resultat_de, int resultat_de_special) {
     // Effacer l'écran
     SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255);
     SDL_RenderClear(m_renderer);
@@ -97,7 +100,7 @@ void Renderer::renderGame(const Joueur& joueurs) {
     renderHotels();
 
     // Rendu dés
-    renderDe();
+    renderDe(resultat_de, resultat_de_special);
 
     // Rendu du tableau
     renderTable();
@@ -107,6 +110,9 @@ void Renderer::renderGame(const Joueur& joueurs) {
 
     // Rendu pions
     afficherPion(joueurs);
+
+    // Rendu terminal
+    renderTerminal(phrases);
 
     // Mettre à jour l'affichage
     SDL_RenderPresent(m_renderer);
@@ -220,9 +226,7 @@ void Renderer::renderHotels() {
 }
 
 
-int resultat_de = -1;
-int resultat_de_special = -1;
-void Renderer::renderDe() {
+void Renderer::renderDe(int resultat_de, int resultat_de_special) {
     // Jouer le dé
     SDL_SetRenderDrawColor(m_renderer, 173, 216, 230, 255); // Bleu clair
     SDL_Rect buttonRect = {800, 10, 150, 50}; // Rectangle autour du texte "Jouer le dé"
@@ -248,64 +252,46 @@ void Renderer::renderDe() {
     SDL_FreeSurface(textSurface);
     SDL_DestroyTexture(textTexture);
 
-    // // /*****************CLIC SOURIS**************/
-    // // DeNormal deNormal;
-    // // DeSpecial deSpecial;
-    // // SDL_Event event;
-    // // while (SDL_PollEvent(&event)) {
-    // // // Vérifier si le clic de la souris se produit dans la zone "Jouer le dé"
-    // //     if (event.type == SDL_MOUSEBUTTONDOWN) {
-    // //         int mouseX, mouseY;
-    // //         SDL_GetMouseState(&mouseX, &mouseY);
-    // //         if (mouseX >= 800 && mouseX <= 950 && mouseY >= 10 && mouseY <= 60) {
-    // //             // Clic détecté dans la zone "Jouer le dé", donc lancer le dé
-    // //             resultat_de = deNormal.lanceDe();
-    // //         }
-    // //         if (mouseX >= 800 && mouseX <= 950 && mouseY >= 100 && mouseY <= 150) {
-    // //             // Clic détecté dans la zone "Jouer le dé spécial", donc lancer le dé spécial
-    // //             resultat_de_special = deSpecial.lanceDe();
-    // //         }
-    // //     }
-    // // }
-    // // // Texte "Résultat du dé : "
-    // // std::string resultat_str = std::to_string(resultat_de);
-    // // textSurface = TTF_RenderText_Solid(m_font, resultat_str.c_str(), {0, 0, 0, 255}); // Noir
-    // // if (resultat_de == -1)textSurface = TTF_RenderText_Solid(m_font, " ", {0, 0, 0, 255}); // Noir
-    // // textTexture = SDL_CreateTextureFromSurface(m_renderer, textSurface);
-    // // textRect = {800 + buttonRect.w + 20, 10 + (buttonRect.h - textSurface->h) / 2, textSurface->w, textSurface->h};
-    // // SDL_RenderCopy(m_renderer, textTexture, NULL, &textRect);
-    // // SDL_FreeSurface(textSurface);
-    // // SDL_DestroyTexture(textTexture);
+    /*****************CLIC SOURIS**************/
+    // Texte "Résultat du dé : "
+    std::string resultat_str = std::to_string(resultat_de);
+    textSurface = TTF_RenderText_Solid(m_font, resultat_str.c_str(), {0, 0, 0, 255}); // Noir
+    if (resultat_de == -1)textSurface = TTF_RenderText_Solid(m_font, " ", {0, 0, 0, 255}); // Noir
+    textTexture = SDL_CreateTextureFromSurface(m_renderer, textSurface);
+    textRect = {800 + buttonRect.w + 20, 10 + (buttonRect.h - textSurface->h) / 2, textSurface->w, textSurface->h};
+    SDL_RenderCopy(m_renderer, textTexture, NULL, &textRect);
+    SDL_FreeSurface(textSurface);
+    SDL_DestroyTexture(textTexture);
 
 
-    // // Texte "Résultat du dé special : "
-    // std::string special_result;
-    // switch(resultat_de_special) {
-    //     case 0:
-    //         special_result = "rouge";
-    //         break;
-    //     case 1:
-    //     case 2:
-    //     case 3:
-    //         special_result = "vert";
-    //         break;
-    //     case 4:
-    //         special_result = "H (gratuit)";
-    //         break;
-    //     case 5:
-    //         special_result = "2D (double)";
-    //         break;
-    //     default:
-    //         special_result = " ";
-    // }
-
-    // textSurface = TTF_RenderText_Solid(m_font, special_result.c_str(), {0, 0, 0, 255}); // Noir
-    // textTexture = SDL_CreateTextureFromSurface(m_renderer, textSurface);
-    // textRect = {800 + buttonRect.w + 20, 100 + (buttonRect.h - textSurface->h) / 2, textSurface->w, textSurface->h};
-    // SDL_RenderCopy(m_renderer, textTexture, NULL, &textRect);
-    // SDL_FreeSurface(textSurface);
-    // SDL_DestroyTexture(textTexture);
+    // Texte "Résultat du dé special : "
+    std::string special_result;
+    switch(resultat_de_special) {
+        case 0:
+            special_result = "rouge";
+            break;
+        case 1:
+        case 2:
+        case 3:
+            special_result = "vert";
+            break;
+        case 4:
+            special_result = "H (gratuit)";
+            break;
+        case 5:
+            special_result = "2D (double)";
+            break;
+        default:
+            special_result = " ";
+    }
+    textSurface = TTF_RenderText_Solid(m_font, special_result.c_str(), {0, 0, 0, 255}); // Noir
+    textTexture = SDL_CreateTextureFromSurface(m_renderer, textSurface);
+    textRect = {800 + buttonRect.w + 20, 100 + (buttonRect.h - textSurface->h) / 2, textSurface->w, textSurface->h};
+    SDL_RenderCopy(m_renderer, textTexture, NULL, &textRect);
+    SDL_FreeSurface(textSurface);
+    SDL_DestroyTexture(textTexture);
 }
+
 void Renderer::renderTable() {
     // Tableau avec 3 lignes et 6 colonnes
     // Définition des textes à afficher dans chaque cellule
@@ -369,7 +355,6 @@ void Renderer::renderTable() {
 
 
     
-
     // Texte "X : Achat terrain"
     SDL_Surface* textSurface = TTF_RenderText_Solid(m_font, "X : Achat terrain", {0, 0, 0, 255}); // Noir
     SDL_Texture* textTexture = SDL_CreateTextureFromSurface(m_renderer, textSurface);
@@ -503,12 +488,51 @@ void Renderer::afficherPion(const Joueur& joueurs) const {
 
 
     // Dessiner le pion rouge pour le joueur 1
-    SDL_Rect redPion = {cases.getX(positionJoueur1), cases.getY(positionJoueur1), 10, 10};
+    SDL_Rect redPion = {cases.getX(positionJoueur1)+2, cases.getY(positionJoueur1)+2, 10, 10};
+    if (positionJoueur1 == 0) redPion = {cases.getX(positionJoueur1) +15, cases.getY(positionJoueur1) +2, 10, 10};
     SDL_SetRenderDrawColor(m_renderer, 255, 0, 0, 255); // Rouge
     SDL_RenderFillRect(m_renderer, &redPion);
-
-    // Dessiner le pion vert pour le joueur 2
-    SDL_Rect greenPion = {cases.getX(positionJoueur2), cases.getY(positionJoueur2),10, 10};
+     // Dessiner le pion vert pour le joueur 2
+    SDL_Rect greenPion = {cases.getX(positionJoueur2)+2, cases.getY(positionJoueur2)+2, 10, 10};
     SDL_SetRenderDrawColor(m_renderer, 0, 255, 0, 255); // Vert
     SDL_RenderFillRect(m_renderer, &greenPion);
 }
+
+void Renderer::renderTerminal(const std::vector<std::string>& phrases) {
+    // Couleur du texte : blanc
+    SDL_Color textColor = {255, 255, 255};
+
+    // Couleur du rectangle : noir
+    SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
+
+    // Rectangle noir
+    SDL_Rect rect = {800, 390, 600, 200};
+    SDL_RenderFillRect(m_renderer, &rect);
+
+    int yPos = 400; // Position verticale initiale pour le texte
+
+    // Affichage du texte
+    for (const auto& phrase : phrases) {
+        // Rendu de la phrase actuelle
+        SDL_Surface* surface = TTF_RenderText_Solid(m_font, phrase.c_str(), textColor);
+        SDL_Texture* texture = SDL_CreateTextureFromSurface(m_renderer, surface);
+        SDL_Rect textRect = {810, yPos, 0, 0}; // Position du texte
+        SDL_QueryTexture(texture, nullptr, nullptr, &textRect.w, &textRect.h);
+        SDL_RenderCopy(m_renderer, texture, nullptr, &textRect);
+
+        // Mise à jour de l'affichage
+        SDL_RenderPresent(m_renderer);
+
+        // Attendre un certain temps avant d'afficher la phrase suivante
+        SDL_Delay(500); // Attendre 1 seconde entre chaque phrase
+
+        // Mettre à jour la position verticale pour la prochaine phrase
+        yPos += textRect.h + 10;
+
+        // Libérer la mémoire
+        SDL_FreeSurface(surface);
+        SDL_DestroyTexture(texture);
+    }
+    SDL_Delay(1000);
+}
+
