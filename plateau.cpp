@@ -1,4 +1,3 @@
-// plateau.cpp
 #include "plateau.hpp"
 
 #include <chrono>
@@ -72,7 +71,6 @@ void Renderer::initTrackRects() {
 
 }
 
-
 void Renderer::initHotelNames() {
     // Initialisation des noms d'hôtels pour les emplacements autour du circuit
     m_hotelNames.push_back("Hotel1");
@@ -128,10 +126,6 @@ void Renderer::renderTrack() {
     {
        SDL_RenderFillRect(m_renderer, &rect);
     }
-<<<<<<< HEAD
-   
-=======
->>>>>>> c0631ad2d1e1bb3b46e8adad67a9369d949a867a
 
     // Rendu du rectangle bleu (DEPART) en bas à gauche
     SDL_Rect startRect = {150, 450, 50, 50};

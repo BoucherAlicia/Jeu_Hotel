@@ -10,9 +10,8 @@
 
 #include <SDL2/SDL_image.h>
 #include <sstream>
-
+#include "joueur.hpp"
 #include "case.hpp"
-#include "jeu.cpp"
 
 class Renderer {
 public:

@@ -1,6 +1,7 @@
 // terrain.cpp
 
 #include "terrain.hpp"
+#include "jeu.hpp"
 
 Terrain::Terrain(const std::string& nom, int prix, const std::string& propriete)
     : m_nom(nom), m_prix(prix), m_propriete(propriete), m_estOccupe(false), m_estConstruit(false) {}
@@ -19,9 +20,9 @@ void Terrain::afficherInfo() const {
 int Terrain::getTerrainIndex(int numeroCase) const { //pour eviter les repetition du code
     if (numeroCase < 1 || numeroCase > 27) {
         return -1;
-    } else if (numeroCase >= 1 && numeroCase < 4) {
+    } else if (numeroCase >= 1 && numeroCase <= 4) {
         return 0;
-    } else if (numeroCase >= 5 && numeroCase < 12) {
+    } else if (numeroCase >= 5 && numeroCase <= 12) {
         return 1;
     } else if (numeroCase >= 13 && numeroCase < 20) {
         return 2;
@@ -35,10 +36,14 @@ void Terrain::updateTerrainStatus(int numeroCase, bool estOccupe) { //pour mettr
     int terrainIndex = getTerrainIndex(numeroCase);                 
     if (terrainIndex != -1) {
         terrains[terrainIndex].m_estOccupe = estOccupe;
-        terrains[terrainIndex].m_propriete = "Joueur1"; //A MODIFIER POUR AFFICHER LE NOM DU JOUEUR QUI OCCUPERA LE TERRAIN
+        terrains[terrainIndex].m_propriete = "joueurs.getNom(0)"; //A MODIFIER POUR AFFICHER LE NOM DU JOUEUR QUI OCCUPERA LE TERRAIN
     } else {
         std::cerr << "Erreur : numeroCase invalide." << std::endl;
     }
+}
+
+bool Terrain::estOccupe() const {
+    return m_estOccupe;
 }
 
 void Terrain::occupe(int numeroCase) {
@@ -73,6 +78,6 @@ const Terrain* Terrain::getTerrainAdjacent(int numeroCase) const {
         terrains[terrainIndex].afficherInfo();
     } else {
         std::cerr << "Erreur : numeroCase invalide." << std::endl;
+        return nullptr;
     }
-    return nullptr;
 }

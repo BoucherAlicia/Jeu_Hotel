@@ -1,29 +1,23 @@
-<<<<<<< HEAD
-=======
+// hotel.hpp
+
 #ifndef HOTEL_HPP
 #define HOTEL_HPP
 
-#include "propriete.hpp"
-#include <iostream>
+#include "terrain.hpp" // Inclure la classe de base Terrain
 
-class Hotel {
+class Hotel : public Terrain { // Hotel hérite de Terrain
+
 private:
-    std::string nom;
-    int prixTerrain;
-    int prixHotel1;
-    int prixHotel2;
-    int prixEentree;
+    std::string m_propriete; // Propriétaire de l'hôtel
+    int m_indexTerrain; // Index du terrain
 
 public:
-    Hotel(const std::string& nom, int prixTerrain, int prixHotel1, int prixHotel2, int prixEentree)
-        : prixTerrain(prixTerrain), prixHotel1(prixHotel1), prixHotel2(prixHotel2), prixEentree(prixEentree) {}
+    // Constructeurs
+    Hotel(const std::string& nom, int prix, const std::string& propriete);
 
-    // Méthode pour acheter la propriété
-    void acheter() {
-        std::cout << "Achat de la propriete : " << nom << std::endl;
-        // Ajoutez ici la logique pour l'achat de la propriété
-    }
+    // Méthode pour construire un hôtel par un joueur donné
+    void construireHotel(int m_indexTerrain, const std::string& joueur);
 };
 
 #endif
->>>>>>> c0631ad2d1e1bb3b46e8adad67a9369d949a867a
+
