@@ -8,12 +8,19 @@
 #include <string>
 #include "terrain.hpp"
 
+#include <SDL2/SDL_image.h>
+#include <sstream>
+
+#include "case.hpp"
+#include "jeu.cpp"
+
 class Renderer {
 public:
     Renderer(SDL_Renderer* renderer, int width, int height);
     ~Renderer();
 
-    void renderGame();
+    void renderGame(const Joueur& joueurs, const std::vector<std::string>& phrases, int resultat_de, int resultat_de_special);
+ 
 
 protected:
     SDL_Renderer* m_renderer;
@@ -31,8 +38,11 @@ protected:
     void initTerrains();
     void renderTrack();
     void renderHotels();
+    void renderDe(int resultat_de, int resultat_de_special);
     void renderTable();
     void renderCases();
+    void afficherPion(const Joueur& joueurs) const;
+    void renderTerminal(const std::vector<std::string>& phrases);
 };
 
 #endif // RENDERER_HPP
