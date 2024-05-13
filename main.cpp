@@ -4,6 +4,7 @@
 #include "terrain.hpp"
 #include "joueur.hpp"
 #include "case.hpp"
+#include "hotel.hpp"
 
 
 
@@ -21,6 +22,15 @@ int main() {
     terrain.getTerrainAdjacent(numerocase);
     numerocase = 7;
     terrain.getTerrainAdjacent(numerocase);
+/*---------------------------------------------------------------------------------------------------------------------*/
+// Création d'un objet Hotel
+    Hotel hotel("Hotel1", 1000, "Joueur1");
+
+    // Occuper le terrain par le joueur 1
+    hotel.occupe(1);
+
+    // Construire un hôtel sur le terrain si c'est occupé par le joueur 1
+    hotel.construireHotel("Joueur1");
 /*---------------------------------------------------------------------------------------------------------------------*/
     // Initialize SDL
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
