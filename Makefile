@@ -8,10 +8,10 @@ LIBS=-lSDL2 -lSDL2_ttf -lSDL2_image
 
 all: hotel
 
-hotel: main.o terrain.o plateau.o case.o jeu.o joueur.o
-	$(LD) $(LDFLAGS) main.o terrain.o plateau.o case.o jeu.o joueur.o -o hotel $(LIBS)
+hotel: main.o terrain.o plateau.o case.o jeu.o joueur.o hotel.o
+	$(LD) $(LDFLAGS) main.o terrain.o plateau.o case.o jeu.o joueur.o hotel.o -o hotel $(LIBS)
 
-main.o: main.cpp terrain.hpp plateau.hpp case.hpp jeu.cpp joueur.cpp
+main.o: main.cpp terrain.hpp plateau.hpp case.hpp jeu.cpp joueur.cpp hotel.cpp
 	$(CPP) $(CPPFLAGS) -c main.cpp
 	
 terrain.o: terrain.cpp terrain.hpp
@@ -28,6 +28,9 @@ joueur.o: joueur.cpp joueur.hpp
 
 case.o: case.hpp case.cpp
 	$(CPP) $(CPPFLAGS) -c case.cpp
+
+hotel.o: hotel.hpp hotel.cpp
+	$(CPP) $(CPPFLAGS) -c hotel.cpp
 
 clean:
 	rm -f *.o hotel

@@ -1,23 +1,29 @@
+// jeu.cpp
 #include "joueur.hpp"
 #include "de_special.hpp"
 #include <iostream>
 #include "terrain.hpp"
 #include "plateau.hpp"
+#include "hotel.hpp"
+
 void jouerPartie(SDL_Renderer* renderer, Renderer& gameRenderer) {
     // Création des joueurs
     Terrain terrain;
+    Hotel hotel("hotel1");
     std::vector<std::string> nomsJoueurs = {"Alicia", "Charbel"};
     std::vector<int> argentsInitiaux = {5000, 5000};
     std::vector<int> positionsInitiales = {1, 1};
     Joueur joueurs(nomsJoueurs, argentsInitiaux, positionsInitiales);
     int resultatDe = 0;
     int resultatDe_special = -1;
-
+    int construitHotel = -1;
     // Création du dé normal
     DeNormal deNormal;
     DeSpecial deSpecial;
     std::vector<bool> tableauBool(4);
+    std::vector<int> occupTerrain = {-1, -1, -1, -1}; //pour savoir qui occupe le terrain, 0 pour joueur1 et 1 pour joueur2
     std::vector<int> prixLoyer = {100, 200, 300, 400};
+    std::vector<int> typeHotel = {-1, -1, -1, -1}; //pour savoir le type de l'hotel, 0 pour hotel de base et 1 pour hotel annexe
 
     // Déroulement du jeu pour n tours
     for (int tour = 1; tour <= 10; ++tour) {
@@ -36,7 +42,7 @@ void jouerPartie(SDL_Renderer* renderer, Renderer& gameRenderer) {
             std::vector<std::string> totalPhrases;
             totalPhrases.insert(totalPhrases.end(), tourPhrases.begin(), tourPhrases.end());
             totalPhrases.insert(totalPhrases.end(), joueurPhrases.begin(), joueurPhrases.end());
-            gameRenderer.renderGame(joueurs, totalPhrases, resultatDe, resultatDe_special);
+            gameRenderer.renderGame(joueurs, totalPhrases, resultatDe, resultatDe_special, typeHotel);
             // Attendre que le joueur lance le dé en cliquant sur le plateau
             bool deLance = false;
             while (!deLance) {
@@ -74,7 +80,7 @@ void jouerPartie(SDL_Renderer* renderer, Renderer& gameRenderer) {
                                 totalPhrases2.insert(totalPhrases2.end(), tourPhrases.begin(), tourPhrases.end());
                                 totalPhrases2.insert(totalPhrases2.end(), dePhrases.begin(), dePhrases.end());
                                 totalPhrases2.insert(totalPhrases2.end(), positionPhrases.begin(), positionPhrases.end());
-                                gameRenderer.renderGame(joueurs, totalPhrases2, resultatDe, resultatDe_special);
+                                gameRenderer.renderGame(joueurs, totalPhrases2, resultatDe, resultatDe_special, typeHotel);
                             } else {
                                 // Les joueurs sont sur la même case
                                 // Mettre à jour la position du joueur
@@ -89,7 +95,7 @@ void jouerPartie(SDL_Renderer* renderer, Renderer& gameRenderer) {
                                 totalPhrases3.insert(totalPhrases3.end(), dePhrases.begin(), dePhrases.end());
                                 totalPhrases3.insert(totalPhrases3.end(), positionPhrases.begin(), positionPhrases.end());
                                 totalPhrases3.insert(totalPhrases3.end(), memeCasePhrases.begin(), memeCasePhrases.end());
-                                gameRenderer.renderGame(joueurs, totalPhrases3, resultatDe, resultatDe_special);
+                                gameRenderer.renderGame(joueurs, totalPhrases3, resultatDe, resultatDe_special, typeHotel);
                                 SDL_Delay(500);
                             }
                             //Relancer le dé s'il était égal à 6
@@ -99,7 +105,7 @@ void jouerPartie(SDL_Renderer* renderer, Renderer& gameRenderer) {
                                 std::vector<std::string> relancePhrases = {
                                     "Vous avez obtenu un 6, vous devez relancer le de : "
                                 };
-                                gameRenderer.renderGame(joueurs, relancePhrases, resultatDe, resultatDe_special);
+                                gameRenderer.renderGame(joueurs, relancePhrases, resultatDe, resultatDe_special, typeHotel);
                                 SDL_Delay(1000); // Attendre un court instant avant de relancer le dé
                             } else {
                                 // Marquer que le dé a été lancé
@@ -125,8 +131,27 @@ void jouerPartie(SDL_Renderer* renderer, Renderer& gameRenderer) {
                                         //joueurs.retirerArgent(i, terrain.getPrix(numerocase));
                                         terrain.occupe(numerocase);
                                         tableauBool[index] = true;
+                                        occupTerrain[index] = i; //pour savoir qui occupe le terrain, 0 pour joueur1 et 1 pour joueur2
                                         std::cout << "Vous avez achete le terrain" << std::endl;
                                         //std::cout << "Vous avez maintenant " << joueurs.getArgent(i) << " euros" << std::endl;
+                                        std::cout << "est ce que vous voulez construire un hotel? (oui/non)" << std::endl;
+                                        std::cin >> reponse;
+                                        if (reponse == "oui") {
+                                            //joueurs.retirerArgent(i, 1000);
+                                            typeHotel[index] = 0;
+                                            hotel.construireHotel(typeHotel[index]);
+                                            gameRenderer.renderGame(joueurs, totalPhrases, resultatDe, resultatDe_special, typeHotel);
+                                            SDL_Delay(1000);
+                                            terrain.construit(numerocase);
+                                            std::cout << "Vous avez construit un hotel" << std::endl;
+                                            //std::cout << "Vous avez maintenant " << joueurs.getArgent(i) << " euros" << std::endl;
+                                        }
+                                    }
+                                }
+                                else {
+                                    std::cout << "Le terrain est deja occupe" << std::endl;
+                                    if (occupTerrain[index] == i) {
+                                        std::cout << "vous etes le proprietaire de ce terrain" << std::endl;
                                         std::cout << "est ce que vous voulez construire un hotel? (oui/non)" << std::endl;
                                         std::cin >> reponse;
                                         if (reponse == "oui") {
@@ -136,11 +161,10 @@ void jouerPartie(SDL_Renderer* renderer, Renderer& gameRenderer) {
                                             //std::cout << "Vous avez maintenant " << joueurs.getArgent(i) << " euros" << std::endl;
                                         }
                                     }
-                                }
-                                else {
-                                    std::cout << "Le terrain est deja occupe" << std::endl;
-                                    std::cout << "vous devez payer le loyer de " << prixLoyer[index] << "€" << std::endl;
-                                    //std::cout << "il vous reste " << joueurs.getArgent(i) << "€" << std::endl;
+                                    else {
+                                        std::cout << "vous devez payer le loyer de " << prixLoyer[index] << "€" << std::endl;
+                                        //std::cout << "il vous reste " << joueurs.getArgent(i) << "€" << std::endl;
+                                    }
                                 }
                             }
                             else {
@@ -158,6 +182,6 @@ void jouerPartie(SDL_Renderer* renderer, Renderer& gameRenderer) {
     std::vector<std::string> finPartiePhrases = {
         "Fin de la partie"
     };
-    gameRenderer.renderGame(joueurs, finPartiePhrases, resultatDe, resultatDe_special);
+    gameRenderer.renderGame(joueurs, finPartiePhrases, resultatDe, resultatDe_special, typeHotel);
     SDL_Delay(3000); // Attendre 3 secondes avant de fermer la fenêtre
 }

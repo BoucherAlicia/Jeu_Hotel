@@ -1,7 +1,7 @@
 // plateau.hpp
+
 #ifndef RENDERER_HPP
 #define RENDERER_HPP
-
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <vector>
@@ -18,7 +18,7 @@ public:
     Renderer(SDL_Renderer* renderer, int width, int height);
     ~Renderer();
 
-    void renderGame(const Joueur& joueurs, const std::vector<std::string>& phrases, int resultat_de, int resultat_de_special);
+    void renderGame(const Joueur& joueurs, const std::vector<std::string>& phrases, int resultat_de, int resultat_de_special, const std::vector<int>& typeHotel);
  
 
 protected:
@@ -31,6 +31,7 @@ protected:
     std::vector<Terrain> m_terrains;
     TTF_Font* m_font; // Déclaration de la police de caractères
     TTF_Font* m_font2; // Déclaration de la police de caractères
+    //std::vector<int>& typeHotel;
 
     void initTrackRects();
     void initHotelNames();
@@ -42,6 +43,8 @@ protected:
     void renderCases();
     void afficherPion(const Joueur& joueurs) const;
     void renderTerminal(const std::vector<std::string>& phrases);
+    //void renderHotelAffiche(int index);
+    void renderHotelAffiche(const std::vector<int>& typeHotel);
 };
 
 #endif // RENDERER_HPP

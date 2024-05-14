@@ -1,18 +1,22 @@
 // hotel.cpp
 
 #include "hotel.hpp"
+#include "plateau.hpp"
 
-Hotel::Hotel(const std::string& nom, int prix, const std::string& propriete)
-    : Terrain(nom, prix, propriete) {} // Appel du constructeur de la classe de base Terrain
+Hotel::Hotel(const std::string& nom){}
 
-void Hotel::construireHotel(int m_indexTerrain,const std::string& joueur) {
-    // Vérifier si le terrain est occupé par le joueur donné
-    if (m_estOccupe && m_propriete == joueur) {
-        // Construire l'hôtel
+// Hotel::Hotel(const std::string& nom)
+//     : Terrain(nom, prix, propriete) {} // Appel du constructeur de la classe de base Terrain
+
+// Hotel::Hotel() { //constructeur par defaut
+//     hotels.emplace_back("Hotel de base");
+// }
+
+void Hotel::construireHotel(int m_indexTerrain) {
         m_estConstruit = true;
-        std::cout << "Un hôtel a été construit sur le terrain " << m_indexTerrain << " par " << joueur << std::endl;
-    } else {
-        // Afficher un message d'erreur si le terrain n'est pas occupé par le joueur donné
-        std::cerr << "Impossible de construire un hôtel sur " << m_nom << ". Le terrain n'est pas occupé par " << joueur << "." << std::endl;
-    }
+        //afficher sur l'ecran
+        //renderHotelAffiche(m_indexTerrain);
+        std::cout << "Vous avez construit un hotel sur le terrain " << m_indexTerrain << std::endl;
+
 }
+
