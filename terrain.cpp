@@ -18,7 +18,7 @@ void Terrain::afficherInfo() const {
 }
 
 int Terrain::getTerrainIndex(int numeroCase) const { //pour eviter les repetition du code
-    if (numeroCase < 1 || numeroCase > 27) {
+    if (numeroCase < 1 || numeroCase > 30) {
         return -1;
     } else if (numeroCase >= 1 && numeroCase <= 4) {
         return 0;
@@ -26,7 +26,7 @@ int Terrain::getTerrainIndex(int numeroCase) const { //pour eviter les repetitio
         return 1;
     } else if (numeroCase >= 13 && numeroCase < 20) {
         return 2;
-    } else if (numeroCase >= 20 && numeroCase < 27) {
+    } else if (numeroCase >= 20 && numeroCase <= 30) {
         return 3;
     }
     return -1;
