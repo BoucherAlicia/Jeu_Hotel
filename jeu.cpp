@@ -139,7 +139,7 @@ void jouerPartie(SDL_Renderer* renderer, Renderer& gameRenderer) {
                                         if (reponse == "oui") {
                                             //joueurs.retirerArgent(i, 1000);
                                             typeHotel[index] = 0;
-                                            hotel.construireHotel(typeHotel[index]);
+                                            hotel.construireHotel(index);
                                             gameRenderer.renderGame(joueurs, totalPhrases, resultatDe, resultatDe_special, typeHotel);
                                             SDL_Delay(1000);
                                             terrain.construit(numerocase);

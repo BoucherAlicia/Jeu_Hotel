@@ -546,20 +546,17 @@ void Renderer::renderHotelAffiche(const std::vector<int>& typeHotel){
     for(int index = 0; index < typeHotel.size(); index++){
         
         int i = typeHotel[index];
-        if(i == -1){
-            return;
-        }
-        else{
+        if(i == 0 || i == 1){
             SDL_Surface* houseSurface = IMG_Load("hotel_debase.png");
-            std::cout << "on va construire hotel_debase.png sur terrain " << typeHotel[index]<< std::endl;
+            //std::cout << "on va construire hotel_debase.png sur terrain " << index << std::endl;
             if (!houseSurface) {
                 printf("Unable to load image! SDL_image Error: %s\n", IMG_GetError());
                 // Gérer l'erreur de chargement de l'image
             } 
             else {
                 // Réduire la taille de l'image si nécessaire
-                int targetWidth = 40; // Largeur cible
-                int targetHeight = 40; // Hauteur cible
+                int targetWidth = 100; // Largeur cible
+                int targetHeight = 100; // Hauteur cible
                 SDL_Surface* scaledSurface = SDL_CreateRGBSurface(0, targetWidth, targetHeight, 32, 0, 0, 0, 0);
                 SDL_BlitScaled(houseSurface, NULL, scaledSurface, NULL);
 
@@ -570,19 +567,27 @@ void Renderer::renderHotelAffiche(const std::vector<int>& typeHotel){
                     // Gérer l'erreur de création de la texture
                 } 
                 else {
-                    switch (i) {
+                    switch (index) {
                         case 0:
-                            imageRect = {50, 500, 70, 90}; // Rectangle pour la première position
-                            break;
+                            if(i == 0){
+                                imageRect = {20, 470, 100, 100}; // Rectangle pour la première position
+                                break;
+                            }
                         case 1:
-                            imageRect = {50, 100, 70, 90}; // Rectangle pour la deuxième position
-                            break;
+                            if(i == 0){
+                                imageRect = {20, 100, 100, 100}; // Rectangle pour la deuxième position
+                                break;
+                            }
                         case 2:
-                            imageRect = {100, 100, 70, 90}; // Rectangle pour la deuxième position
-                            break;
+                            if(i == 0){
+                                imageRect = {620, 100, 70, 90}; // Rectangle pour la deuxième position
+                                break;
+                            }
                         case 3:
-                            imageRect = {100, 300, 70, 90}; // Rectangle pour la deuxième position
-                            break;
+                            if(i == 0){
+                                imageRect = {620, 470, 70, 90}; // Rectangle pour la deuxième position
+                                break;
+                            }
                     } 
                 }     
                     // Afficher l'image aux différentes positions
@@ -591,16 +596,18 @@ void Renderer::renderHotelAffiche(const std::vector<int>& typeHotel){
                     SDL_DestroyTexture(houseTexture);
                     SDL_FreeSurface(scaledSurface);
                     SDL_FreeSurface(houseSurface);
-            }
+            
                 // else if (typeHotel[i] == 1) {
                 //             // Si le type d'hôtel est 1 (autre type d'hôtel), afficher l'hôtel correspondant sur le terrain i
                 //             // Positionner l'image de l'hôtel en fonction de l'indice i
                 //         }
                 // Libérer la mémoire de la surface originale et de la surface réduite
             
+            }
         }
     }
 }
+
 
 /*
 void Renderer::renderHotelAffiche(int index)
