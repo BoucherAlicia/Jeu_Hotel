@@ -104,7 +104,7 @@ void Renderer::renderGame(const Joueur& joueurs, const std::vector<std::string>&
     renderDe(resultat_de, resultat_de_special);
 
     // Rendu du tableau
-    renderTable();
+    renderTable(joueurs);
     
     // Rendu des cases
     renderCases();
@@ -296,7 +296,7 @@ void Renderer::renderDe(int resultat_de, int resultat_de_special) {
     SDL_DestroyTexture(textTexture);
 }
 
-void Renderer::renderTable() {
+void Renderer::renderTable(const Joueur& joueurs) {
     // Tableau avec 3 lignes et 6 colonnes
     // Définition des textes à afficher dans chaque cellule
     std::vector<std::vector<std::string>> tableContents = {
@@ -304,6 +304,46 @@ void Renderer::renderTable() {
         {"Joueur 1", "", "", "", "", ""},
         {"Joueur 2", "", "", "", "", ""}
     };
+    // Récupérer les montants d'argent des joueurs 1 et 2
+    std::string argentJoueur1 = std::to_string(joueurs.getArgent(0)); // Joueur 1
+    std::string argentJoueur2 = std::to_string(joueurs.getArgent(1)); // Joueur 2
+
+    // Remplacer les cases correspondantes dans le tableau par les montants d'argent
+    tableContents[1][1] = argentJoueur1; // Montant d'argent pour Joueur 1
+    tableContents[2][1] = argentJoueur2; // Montant d'argent pour Joueur 2
+
+    // Terrain terrain;
+    // // Récupérer l'état des hôtels pour chaque joueur depuis la classe Terrain
+    // std::string etatHotelJoueur1 = "";
+    // std::string etatHotelJoueur2 = "";
+    // for (int i = 1; i <= 4; ++i) {
+    //     const Terrain* terrainAdjacent = terrain.getTerrainAdjacent(i);
+    //     if (terrainAdjacent != nullptr) {
+    //         std::string nomHotel = terrainAdjacent->getNom(i);
+    //         bool estOccupe = terrainAdjacent->estOccupe();
+    //         if (estOccupe) {
+    //             if (terrainAdjacent->getPropriete() == "joueurs.getNom(0)") {
+    //                 etatHotelJoueur1 += "X"; // Ajouter un "X" si l'hôtel est occupé par le joueur 1
+    //             } else {
+    //                 etatHotelJoueur2 += "X"; // Ajouter un "X" si l'hôtel est occupé par le joueur 2
+    //             }
+    //         } else {
+    //             etatHotelJoueur1 += "-";
+    //             etatHotelJoueur2 += "-";
+    //         }
+    //     }
+    // }
+
+    // // Remplacer les cases correspondantes dans le tableau par l'état des hôtels
+    // tableContents[1][2] = etatHotelJoueur1; // Hotel1 pour Joueur 1
+    // tableContents[1][3] = etatHotelJoueur1; // Hotel2 pour Joueur 1
+    // tableContents[1][4] = etatHotelJoueur1; // Hotel3 pour Joueur 1
+    // tableContents[1][5] = etatHotelJoueur1; // Hotel4 pour Joueur 1
+    // tableContents[2][2] = etatHotelJoueur2; // Hotel1 pour Joueur 2
+    // tableContents[2][3] = etatHotelJoueur2; // Hotel2 pour Joueur 2
+    // tableContents[2][4] = etatHotelJoueur2; // Hotel3 pour Joueur 2
+    // tableContents[2][5] = etatHotelJoueur2; // Hotel4 pour Joueur 2
+
 
     // Position initiale du tableau
     int tableX = 10;

@@ -6,6 +6,55 @@
 #include "plateau.hpp"
 #include "hotel.hpp"
 
+void acheterHotel(Joueur& joueurs, std::vector<int>& typeHotel, Hotel& hotel, Terrain& terrain, int i, int index, int numerocase, Renderer& gameRenderer)
+{
+    std::string reponse;
+    std::vector<std::string> phrases; // Tableau pour stocker les phrases à afficher
+    if (joueurs.getArgent(i) >= 1000) {
+        phrases={"Est-ce que vous voulez construire un hotel pour 1000 euros ? (oui/non)"};
+        gameRenderer.renderGame(joueurs, phrases, 0,0, typeHotel);
+        bool choixFait = false;
+        while (!choixFait) {
+            SDL_Event event;
+            while (SDL_PollEvent(&event)) {
+                if (event.type == SDL_MOUSEBUTTONDOWN) {
+                    int mouseX, mouseY;
+                    SDL_GetMouseState(&mouseX, &mouseY);
+
+                    // Vérifiez si le clic est dans la zone du bouton "oui"
+                    if (mouseX >= 1420 && mouseX <= 1450 && mouseY >= 100 && mouseY <= 160) {
+                        reponse = "oui";
+                        choixFait = true;
+                    }
+                    // Vérifiez si le clic est dans la zone du bouton "non"
+                    else if (mouseX >= 1450 && mouseX <= 1480 && mouseY >= 100 && mouseY <= 160) {
+                        reponse = "non";
+                        choixFait = true;
+                    }
+                }
+            }
+        }
+        if (reponse == "oui") {
+            joueurs.retirerArgent(i, 1000);
+            typeHotel[index] = 0;
+            hotel.construireHotel(index);
+            terrain.construit(numerocase);
+            std::vector<std::string> phrases2 = {
+                "Vous avez construit un hotel",
+                "Vous avez maintenant " + std::to_string(joueurs.getArgent(i)) + " euros"
+            };
+            std::vector<std::string> totalPhrases;
+            totalPhrases.insert(totalPhrases.end(), phrases.begin(), phrases.end());
+            totalPhrases.insert(totalPhrases.end(), phrases2.begin(), phrases2.end());
+            gameRenderer.renderGame(joueurs, totalPhrases, 0, -1, typeHotel);
+            
+        }
+    } else {
+        phrases={"Vous avez decide de ne pas construire d'hotel."};
+        gameRenderer.renderGame(joueurs, phrases, 0,0, typeHotel);
+    }
+}
+
 void jouerPartie(SDL_Renderer* renderer, Renderer& gameRenderer) {
     // Création des joueurs
     Terrain terrain;
@@ -98,6 +147,85 @@ void jouerPartie(SDL_Renderer* renderer, Renderer& gameRenderer) {
                                 gameRenderer.renderGame(joueurs, totalPhrases3, resultatDe, resultatDe_special, typeHotel);
                                 SDL_Delay(500);
                             }
+                            
+                            //----------------------------------------------------------------------------------------------------------------------------------------------//                            
+                            std::string reponse;
+                            bool estOccupe = false;
+                            int numerocase = joueurs.getPosition(i);
+                            const Terrain* terrainAdjacent = terrain.getTerrainAdjacent(numerocase);
+                            int index = terrain.getTerrainIndex(numerocase);
+                            if (terrainAdjacent != nullptr) {
+                                // Utilisez le pointeur retourné pour accéder à m_estOccupe
+                                estOccupe = terrainAdjacent->estOccupe();
+                                if ((tableauBool[index] == false) && (joueurs.getArgent(i) >= terrain.getPrix(numerocase))) {
+                                    std::vector<std::string> phrasesTerrain = {"Le terrain est libre, il est a " + std::to_string(terrain.getPrix(numerocase)) + " euros souhaitez vous l'acheter? (oui/non)"};
+                                    gameRenderer.renderGame(joueurs, phrasesTerrain, resultatDe, resultatDe_special, typeHotel);
+                                    bool choixFait = false;
+                                    while (!choixFait) {
+                                        SDL_Event event;
+                                        while (SDL_PollEvent(&event)) {
+                                            if (event.type == SDL_MOUSEBUTTONDOWN) {
+                                                int mouseX, mouseY;
+                                                SDL_GetMouseState(&mouseX, &mouseY);
+
+                                                // Vérifiez si le clic est dans la zone du bouton "oui"
+                                                if (mouseX >= 1420 && mouseX <= 1450 && mouseY >= 10 && mouseY <= 60) {
+                                                    reponse = "oui";
+                                                    choixFait = true;
+                                                }
+                                                // Vérifiez si le clic est dans la zone du bouton "non"
+                                                else if (mouseX >= 1450 && mouseX <= 1480 && mouseY >= 10 && mouseY <= 60) {
+                                                    reponse = "non";
+                                                    choixFait = true;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    if (reponse == "oui") {
+                                        joueurs.retirerArgent(i, terrain.getPrix(numerocase));
+                                        terrain.occupe(numerocase);
+                                        tableauBool[index] = true;
+                                        occupTerrain[index] = i; //pour savoir qui occupe le terrain, 0 pour joueur1 et 1 pour joueur2
+                                        std::vector<std::string> phrasesTerrain2 = {
+                                            "Le terrain est libre, il est a " + std::to_string(terrain.getPrix(numerocase)) + " euros souhaitez vous l'acheter? (oui/non)",
+                                            "reponse : oui",
+                                            "Vous avez achete le terrain",
+                                            "Vous avez maintenant " + std::to_string(joueurs.getArgent(i)) + " euros"
+                                            };
+                                        gameRenderer.renderGame(joueurs, phrasesTerrain2, resultatDe, resultatDe_special, typeHotel);
+                                    
+                                        //------------------Achat hotel------------------------
+                                        acheterHotel(joueurs, typeHotel, hotel, terrain, i, index, numerocase, gameRenderer);
+                                    }
+                                }
+                                else {
+                                    if (occupTerrain[index] == i) {
+                                        
+                                        std::vector<std::string> phrasesTerrain = {"Le terrain est deja occupe",
+                                        "Vous etes le proprietaire de ce terrain"};
+                                        gameRenderer.renderGame(joueurs, phrasesTerrain, resultatDe, resultatDe_special, typeHotel);
+                                        //------------------Achat hotel------------------------
+                                        acheterHotel(joueurs, typeHotel, hotel, terrain, i, index, numerocase, gameRenderer);
+                                    }
+                                    else {
+                                        joueurs.retirerArgent(i, prixLoyer[index]);
+                                        int deuxiemeJoueur = (i == 0) ? 1 : 0;
+                                        joueurs.ajouterArgent(deuxiemeJoueur, prixLoyer[index]);
+
+                                        std::vector<std::string> phrasesTerrain = {
+                                            "Vous devez payer le loyer de " + std::to_string(prixLoyer[index]) + " euros",
+                                            "Il vous reste " + std::to_string(joueurs.getArgent(i)) + " euros", 
+                                            "Il reste à l'autre joueur" + std::to_string(joueurs.getArgent(deuxiemeJoueur)) + " euros",
+                                            };
+                                        gameRenderer.renderGame(joueurs, phrasesTerrain, resultatDe, resultatDe_special, typeHotel);
+                                        SDL_Delay(1000); // Attendre 3 secondes
+                                    }
+                                }
+                            }
+                            else {
+                                std::cerr << "Erreur : Terrain adjacent invalide." << std::endl;
+                            }
+
                             //Relancer le dé s'il était égal à 6
                             if (resultatDe == 6) 
                             {
@@ -110,65 +238,7 @@ void jouerPartie(SDL_Renderer* renderer, Renderer& gameRenderer) {
                             } else {
                                 // Marquer que le dé a été lancé
                                 deLance = true;
-                            }
-                            //----------------------------------------------------------------------------------------------------------------------------------------------//                            
-                            std::string reponse;
-                            bool estOccupe = false;
-                            int numerocase = joueurs.getPosition(i);
-                            std::cout << "position joueur : " << numerocase << std::endl;
-                            const Terrain* terrainAdjacent = terrain.getTerrainAdjacent(numerocase);
-                            int index = terrain.getTerrainIndex(numerocase);
-                            std::cout << "index : " << index << std::endl;
-                            if (terrainAdjacent != nullptr) {
-                                // Utilisez le pointeur retourné pour accéder à m_estOccupe
-                                estOccupe = terrainAdjacent->estOccupe();
-                                std::cout << "position joueurrr : " << joueurs.getPosition(i) << std::endl;
-                                if (tableauBool[index] == false) {
-                                    //std::cout << (estOccupe ? "Oui" : "Non") << std::endl;
-                                    std::cout << "Le terrain est libre, souhaitez vous l'acheter? (oui/non)" << std::endl;
-                                    std::cin >> reponse;
-                                    if (reponse == "oui") {
-                                        //joueurs.retirerArgent(i, terrain.getPrix(numerocase));
-                                        terrain.occupe(numerocase);
-                                        tableauBool[index] = true;
-                                        occupTerrain[index] = i; //pour savoir qui occupe le terrain, 0 pour joueur1 et 1 pour joueur2
-                                        std::cout << "Vous avez achete le terrain" << std::endl;
-                                        //std::cout << "Vous avez maintenant " << joueurs.getArgent(i) << " euros" << std::endl;
-                                        std::cout << "est ce que vous voulez construire un hotel? (oui/non)" << std::endl;
-                                        std::cin >> reponse;
-                                        if (reponse == "oui") {
-                                            //joueurs.retirerArgent(i, 1000);
-                                            typeHotel[index] = 0;
-                                            hotel.construireHotel(index);
-                                            gameRenderer.renderGame(joueurs, totalPhrases, resultatDe, resultatDe_special, typeHotel);
-                                            SDL_Delay(1000);
-                                            terrain.construit(numerocase);
-                                            std::cout << "Vous avez construit un hotel" << std::endl;
-                                            //std::cout << "Vous avez maintenant " << joueurs.getArgent(i) << " euros" << std::endl;
-                                        }
-                                    }
-                                }
-                                else {
-                                    std::cout << "Le terrain est deja occupe" << std::endl;
-                                    if (occupTerrain[index] == i) {
-                                        std::cout << "vous etes le proprietaire de ce terrain" << std::endl;
-                                        std::cout << "est ce que vous voulez construire un hotel? (oui/non)" << std::endl;
-                                        std::cin >> reponse;
-                                        if (reponse == "oui") {
-                                            //joueurs.retirerArgent(i, 1000);
-                                            terrain.construit(numerocase);
-                                            std::cout << "Vous avez construit un hotel" << std::endl;
-                                            //std::cout << "Vous avez maintenant " << joueurs.getArgent(i) << " euros" << std::endl;
-                                        }
-                                    }
-                                    else {
-                                        std::cout << "vous devez payer le loyer de " << prixLoyer[index] << "€" << std::endl;
-                                        //std::cout << "il vous reste " << joueurs.getArgent(i) << "€" << std::endl;
-                                    }
-                                }
-                            }
-                            else {
-                                std::cerr << "Erreur : Terrain adjacent invalide." << std::endl;
+                                          
                             }
                         }
                     }

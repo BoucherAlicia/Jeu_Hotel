@@ -12,6 +12,7 @@
 #include <sstream>
 #include "joueur.hpp"
 #include "case.hpp"
+#include "terrain.hpp"
 
 class Renderer {
 public:
@@ -35,11 +36,11 @@ protected:
 
     void initTrackRects();
     void initHotelNames();
-    void initTerrains();
+    //void initTerrains();
     void renderTrack();
     void renderHotels();
     void renderDe(int resultat_de, int resultat_de_special);
-    void renderTable();
+    void renderTable(const Joueur& joueurs);
     void renderCases();
     void afficherPion(const Joueur& joueurs) const;
     void renderTerminal(const std::vector<std::string>& phrases);
