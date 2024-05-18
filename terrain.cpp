@@ -18,7 +18,11 @@ void Terrain::afficherInfo() const {
 }
 
 int Terrain::getTerrainIndex(int numeroCase) const { //pour eviter les repetition du code
+<<<<<<< HEAD
     if (numeroCase < 1 || numeroCase > 30) {
+=======
+    if (numeroCase < 1 || numeroCase > 27) {
+>>>>>>> a2dc3b6 (Update classe terrain)
         return -1;
     } else if (numeroCase >= 1 && numeroCase <= 4) {
         return 0;
@@ -36,7 +40,11 @@ void Terrain::updateTerrainStatus(int numeroCase, bool estOccupe) { //pour mettr
     int terrainIndex = getTerrainIndex(numeroCase);                 
     if (terrainIndex != -1) {
         terrains[terrainIndex].m_estOccupe = estOccupe;
+<<<<<<< HEAD
         terrains[terrainIndex].m_propriete = "joueurs.getNom(0)"; //A MODIFIER POUR AFFICHER LE NOM DU JOUEUR QUI OCCUPERA LE TERRAIN
+=======
+        terrains[terrainIndex].m_propriete = "Joueur1"; //A MODIFIER POUR AFFICHER LE NOM DU JOUEUR QUI OCCUPERA LE TERRAIN
+>>>>>>> a2dc3b6 (Update classe terrain)
     } else {
         std::cerr << "Erreur : numeroCase invalide." << std::endl;
     }

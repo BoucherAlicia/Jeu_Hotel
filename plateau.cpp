@@ -72,6 +72,10 @@ void Renderer::initTrackRects() {
 
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> a2dc3b6 (Update classe terrain)
 void Renderer::initHotelNames() {
     // Initialisation des noms d'hôtels pour les emplacements autour du circuit
     m_hotelNames.push_back("Hotel1");
