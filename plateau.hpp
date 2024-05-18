@@ -19,7 +19,7 @@ public:
     Renderer(SDL_Renderer* renderer, int width, int height);
     ~Renderer();
 
-    void renderGame(const Joueur& joueurs, const std::vector<std::string>& phrases, int resultat_de, int resultat_de_special, const std::vector<int>& typeHotel);
+    void renderGame(const Joueur& joueurs, const std::vector<std::string>& phrases, int resultat_de, int resultat_de_special, const std::vector<int>& typeHotel, std::vector<int>& entrees);
  
 
 protected:
@@ -32,7 +32,6 @@ protected:
     std::vector<Terrain> m_terrains;
     TTF_Font* m_font; // Déclaration de la police de caractères
     TTF_Font* m_font2; // Déclaration de la police de caractères
-    //std::vector<int>& typeHotel;
 
     void initTrackRects();
     void initHotelNames();
@@ -46,6 +45,9 @@ protected:
     void renderTerminal(const std::vector<std::string>& phrases);
     //void renderHotelAffiche(int index);
     void renderHotelAffiche(const std::vector<int>& typeHotel);
+    void renderBanqueAffiche();
+    void renderMairieAffiche();
+    void renderEntreeAffiche(std::vector<int>& entrees);
 };
 
 #endif // RENDERER_HPP

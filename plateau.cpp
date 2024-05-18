@@ -72,10 +72,6 @@ void Renderer::initTrackRects() {
 
 }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> a2dc3b6 (Update classe terrain)
 void Renderer::initHotelNames() {
     // Initialisation des noms d'hôtels pour les emplacements autour du circuit
     m_hotelNames.push_back("Hotel1");
@@ -93,23 +89,27 @@ void Renderer::initHotelNames() {
     m_hotelNames.push_back("Hotel Deluxe BOUCHER-ELMORR");
 }
 
-void Renderer::renderGame(const Joueur& joueurs, const std::vector<std::string>& phrases, int resultat_de, int resultat_de_special, const std::vector<int>& typeHotel) {
+void Renderer::renderGame(const Joueur& joueurs, const std::vector<std::string>& phrases, int resultat_de, int resultat_de_special, const std::vector<int>& typeHotel, std::vector<int>& entrees) {
     // Effacer l'écran
     SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255);
     SDL_RenderClear(m_renderer);
     
     // Rendu du circuit
     renderTrack();
-
+    renderDe(resultat_de, resultat_de_special);
+    renderBanqueAffiche();
     // Rendu des hôtels
     renderHotels();
     renderHotelAffiche(typeHotel);
+    renderEntreeAffiche(entrees);
     // Rendu dés
-    renderDe(resultat_de, resultat_de_special);
+    
 
     // Rendu du tableau
     renderTable(joueurs);
-    
+    renderBanqueAffiche();
+    renderMairieAffiche();
+    renderDe(resultat_de, resultat_de_special);
     // Rendu des cases
     renderCases();
 
@@ -121,6 +121,7 @@ void Renderer::renderGame(const Joueur& joueurs, const std::vector<std::string>&
 
     // Rendu hotels
     renderHotelAffiche(typeHotel);
+    renderEntreeAffiche(entrees);
 
     // Mettre à jour l'affichage
     SDL_RenderPresent(m_renderer);
@@ -232,8 +233,6 @@ void Renderer::renderHotels() {
         SDL_DestroyTexture(textTexture);
     }
 }
-
-
 void Renderer::renderDe(int resultat_de, int resultat_de_special) {
     // Jouer le dé
     SDL_SetRenderDrawColor(m_renderer, 173, 216, 230, 255); // Bleu clair
@@ -247,10 +246,9 @@ void Renderer::renderDe(int resultat_de, int resultat_de_special) {
     SDL_FreeSurface(textSurface);
     SDL_DestroyTexture(textTexture);
 
-    
     // Jouer le dé spécial
     SDL_SetRenderDrawColor(m_renderer, 173, 216, 230, 255); // Bleu clair
-    buttonRect = {800, 100, 150, 50}; // Rectangle autour du texte "Jouer le dé"
+    buttonRect = {800, 100, 150, 50}; // Rectangle autour du texte "Jouer le dé spécial"
     SDL_RenderFillRect(m_renderer, &buttonRect);
 
     textSurface = TTF_RenderText_Solid(m_font, "Jouer le de special", {0, 0, 0, 255}); // Noir
@@ -260,19 +258,17 @@ void Renderer::renderDe(int resultat_de, int resultat_de_special) {
     SDL_FreeSurface(textSurface);
     SDL_DestroyTexture(textTexture);
 
-    /*****************CLIC SOURIS**************/
     // Texte "Résultat du dé : "
     std::string resultat_str = std::to_string(resultat_de);
+    if (resultat_de == -1) resultat_str = " ";
     textSurface = TTF_RenderText_Solid(m_font, resultat_str.c_str(), {0, 0, 0, 255}); // Noir
-    if (resultat_de == -1)textSurface = TTF_RenderText_Solid(m_font, " ", {0, 0, 0, 255}); // Noir
     textTexture = SDL_CreateTextureFromSurface(m_renderer, textSurface);
     textRect = {800 + buttonRect.w + 20, 10 + (buttonRect.h - textSurface->h) / 2, textSurface->w, textSurface->h};
     SDL_RenderCopy(m_renderer, textTexture, NULL, &textRect);
     SDL_FreeSurface(textSurface);
     SDL_DestroyTexture(textTexture);
 
-
-    // Texte "Résultat du dé special : "
+    // Texte "Résultat du dé spécial : "
     std::string special_result;
     switch(resultat_de_special) {
         case 0:
@@ -298,7 +294,51 @@ void Renderer::renderDe(int resultat_de, int resultat_de_special) {
     SDL_RenderCopy(m_renderer, textTexture, NULL, &textRect);
     SDL_FreeSurface(textSurface);
     SDL_DestroyTexture(textTexture);
+
+    // Affichage de l'image en fonction du résultat du dé
+    SDL_Rect imageRect = {325, 230, 120, 120}; // Position et taille de l'image
+    SDL_Surface* diceSurface = nullptr;
+    SDL_Texture* diceTexture = nullptr;
+
+    switch (resultat_de) {
+        case 1:
+            diceSurface = IMG_Load("de1.png");
+            break;
+        case 2:
+            diceSurface = IMG_Load("de2.png");
+            break;
+        case 3:
+            diceSurface = IMG_Load("de3.png");
+            break;
+        case 4:
+            diceSurface = IMG_Load("de4.png");
+            break;
+        case 5:
+            diceSurface = IMG_Load("de5.png");
+            break;
+        case 6:
+            diceSurface = IMG_Load("de6.png");
+            break;
+        default:
+            diceSurface = IMG_Load("de_default1.png");
+            break;
+    }
+
+    if (!diceSurface) {
+        printf("Unable to load image! SDL_image Error: %s\n", IMG_GetError());
+    } else {
+        diceTexture = SDL_CreateTextureFromSurface(m_renderer, diceSurface);
+        if (!diceTexture) {
+            printf("Unable to create texture from image! SDL Error: %s\n", SDL_GetError());
+        } else {
+            SDL_SetTextureBlendMode(diceTexture, SDL_BLENDMODE_BLEND);
+            SDL_RenderCopy(m_renderer, diceTexture, NULL, &imageRect);
+            SDL_DestroyTexture(diceTexture);
+        }
+        SDL_FreeSurface(diceSurface);
+    }
 }
+
 
 void Renderer::renderTable(const Joueur& joueurs) {
     // Tableau avec 3 lignes et 6 colonnes
@@ -315,39 +355,6 @@ void Renderer::renderTable(const Joueur& joueurs) {
     // Remplacer les cases correspondantes dans le tableau par les montants d'argent
     tableContents[1][1] = argentJoueur1; // Montant d'argent pour Joueur 1
     tableContents[2][1] = argentJoueur2; // Montant d'argent pour Joueur 2
-
-    // Terrain terrain;
-    // // Récupérer l'état des hôtels pour chaque joueur depuis la classe Terrain
-    // std::string etatHotelJoueur1 = "";
-    // std::string etatHotelJoueur2 = "";
-    // for (int i = 1; i <= 4; ++i) {
-    //     const Terrain* terrainAdjacent = terrain.getTerrainAdjacent(i);
-    //     if (terrainAdjacent != nullptr) {
-    //         std::string nomHotel = terrainAdjacent->getNom(i);
-    //         bool estOccupe = terrainAdjacent->estOccupe();
-    //         if (estOccupe) {
-    //             if (terrainAdjacent->getPropriete() == "joueurs.getNom(0)") {
-    //                 etatHotelJoueur1 += "X"; // Ajouter un "X" si l'hôtel est occupé par le joueur 1
-    //             } else {
-    //                 etatHotelJoueur2 += "X"; // Ajouter un "X" si l'hôtel est occupé par le joueur 2
-    //             }
-    //         } else {
-    //             etatHotelJoueur1 += "-";
-    //             etatHotelJoueur2 += "-";
-    //         }
-    //     }
-    // }
-
-    // // Remplacer les cases correspondantes dans le tableau par l'état des hôtels
-    // tableContents[1][2] = etatHotelJoueur1; // Hotel1 pour Joueur 1
-    // tableContents[1][3] = etatHotelJoueur1; // Hotel2 pour Joueur 1
-    // tableContents[1][4] = etatHotelJoueur1; // Hotel3 pour Joueur 1
-    // tableContents[1][5] = etatHotelJoueur1; // Hotel4 pour Joueur 1
-    // tableContents[2][2] = etatHotelJoueur2; // Hotel1 pour Joueur 2
-    // tableContents[2][3] = etatHotelJoueur2; // Hotel2 pour Joueur 2
-    // tableContents[2][4] = etatHotelJoueur2; // Hotel3 pour Joueur 2
-    // tableContents[2][5] = etatHotelJoueur2; // Hotel4 pour Joueur 2
-
 
     // Position initiale du tableau
     int tableX = 10;
@@ -584,27 +591,32 @@ void Renderer::renderTerminal(const std::vector<std::string>& phrases) {
     SDL_Delay(1000);
 }
 
-void Renderer::renderHotelAffiche(const std::vector<int>& typeHotel){
+void Renderer::renderHotelAffiche(const std::vector<int>& typeHotel) {
     SDL_Rect imageRect;
-    // Charger l'image
-    for(int index = 0; index < typeHotel.size(); index++){
-        
+
+    // Charger et afficher les images en fonction du type d'hôtel
+    for(int index = 0; index < typeHotel.size(); index++) {
         int i = typeHotel[index];
-        if(i != -1){
-            SDL_Surface* houseSurface = IMG_Load("hotel_debase.png");
-            if(i == 1){
-                SDL_Surface* houseSurface = IMG_Load("hotel_annexe.png");
+        if(i != -1) {
+            // Charger l'image appropriée en fonction du type d'hôtel
+            SDL_Surface* houseSurface = nullptr;
+            if(i == 0) {
+                houseSurface = IMG_Load("hotel_debase.png");
+                //printf("Affichage de l'hôtel de base\n");
+            } else if(i == 1) {
+                houseSurface = IMG_Load("hotel_annexe_1.png");
+                //printf("Affichage de l'annexe d'hôtel\n");
             }
-            //std::cout << "on va construire hotel_debase.png sur terrain " << index << std::endl;
+
+            // Vérifier si l'image a été chargée correctement
             if (!houseSurface) {
                 printf("Unable to load image! SDL_image Error: %s\n", IMG_GetError());
                 // Gérer l'erreur de chargement de l'image
-            } 
-            else {
+            } else {
                 // Réduire la taille de l'image si nécessaire
                 int targetWidth = 100; // Largeur cible
                 int targetHeight = 100; // Hauteur cible
-                SDL_Surface* scaledSurface = SDL_CreateRGBSurface(0, targetWidth, targetHeight, 32, 0, 0, 0, 0);
+                SDL_Surface* scaledSurface = SDL_CreateRGBSurfaceWithFormat(0, targetWidth, targetHeight, 32, houseSurface->format->format);
                 SDL_BlitScaled(houseSurface, NULL, scaledSurface, NULL);
 
                 // Créer une texture à partir de l'image réduite
@@ -612,90 +624,194 @@ void Renderer::renderHotelAffiche(const std::vector<int>& typeHotel){
                 if (!houseTexture) {
                     printf("Unable to create texture from image! SDL Error: %s\n", SDL_GetError());
                     // Gérer l'erreur de création de la texture
-                } 
-                else {
+                } else {
+                    // Configurer le mode de blending pour la transparence
+                    SDL_SetTextureBlendMode(houseTexture, SDL_BLENDMODE_BLEND);
+
+                    // Définir le rectangle de destination en fonction de l'index
                     switch (index) {
                         case 0:
-                                imageRect = {20, 470, 100, 100}; // Rectangle pour la première position
-                                break;
+                            imageRect = {20, 400, 100, 100}; // Rectangle pour la première position
+                            break;
                         case 1:
-                                imageRect = {20, 100, 100, 100}; // Rectangle pour la deuxième position
-                                break;
+                            imageRect = {20, 100, 100, 100}; // Rectangle pour la deuxième position
+                            break;
                         case 2:
-                                imageRect = {620, 100, 100, 100}; // Rectangle pour la deuxième position
-                                break;
+                            imageRect = {620, 100, 100, 100}; // Rectangle pour la troisième position
+                            break;
                         case 3:
-                                imageRect = {620, 470, 100, 100}; // Rectangle pour la deuxième position
-                                break;
-                            
-                    } 
-                }     
+                            imageRect = {620, 470, 100, 100}; // Rectangle pour la quatrième position
+                            break;
+                    }
+
                     // Afficher l'image aux différentes positions
                     SDL_RenderCopy(m_renderer, houseTexture, NULL, &imageRect);
-                    // Libérer la mémoire de la texture et de la surface
+
+                    // Libérer la mémoire de la texture
                     SDL_DestroyTexture(houseTexture);
-                    SDL_FreeSurface(scaledSurface);
-                    SDL_FreeSurface(houseSurface);            
+                }
+
+                // Libérer la mémoire des surfaces
+                SDL_FreeSurface(scaledSurface);
+                SDL_FreeSurface(houseSurface);
             }
         }
     }
 }
 
 
-/*
-void Renderer::renderHotelAffiche(int index)
-{
+void Renderer::renderBanqueAffiche() {
+    SDL_Rect imageRect;
+
     // Charger l'image
-    if(index == -1){
-        return;
+    SDL_Surface* houseSurface = IMG_Load("banque.png");
+
+    if (!houseSurface) {
+        printf("Unable to load image! SDL_image Error: %s\n", IMG_GetError());
+        // Gérer l'erreur de chargement de l'image
+    } 
+    else {
+        // Activer la transparence si nécessaire (inutile pour PNG avec alpha, mais bon à savoir)
+        SDL_SetColorKey(houseSurface, SDL_TRUE, SDL_MapRGB(houseSurface->format, 0, 0, 0));
+
+        // Réduire la taille de l'image si nécessaire
+        int targetWidth = 90; // Largeur cible
+        int targetHeight = 90; // Hauteur cible
+        SDL_Surface* scaledSurface = SDL_CreateRGBSurfaceWithFormat(0, targetWidth, targetHeight, 32, houseSurface->format->format);
+        SDL_BlitScaled(houseSurface, NULL, scaledSurface, NULL);
+
+        // Créer une texture à partir de l'image réduite
+        SDL_Texture* houseTexture = SDL_CreateTextureFromSurface(m_renderer, scaledSurface);
+        if (!houseTexture) {
+            printf("Unable to create texture from image! SDL Error: %s\n", SDL_GetError());
+            // Gérer l'erreur de création de la texture
+        } 
+        else {
+            // Configurer le mode de blending pour la transparence
+            SDL_SetTextureBlendMode(houseTexture, SDL_BLENDMODE_BLEND);
+            
+            imageRect = {330, 10, 90, 90}; // Rectangle pour la première position
+
+            // Afficher l'image aux différentes positions
+            SDL_RenderCopy(m_renderer, houseTexture, NULL, &imageRect);
+
+            // Libérer la mémoire de la texture et de la surface
+            SDL_DestroyTexture(houseTexture);
+        }
+        SDL_FreeSurface(scaledSurface);
+        SDL_FreeSurface(houseSurface);            
     }
-    else{
-        SDL_Surface* houseSurface = IMG_Load("hotel_debase.png");
-        std::cout << "on va construire hotel_debase.png sur terrain " << index << std::endl;
-        if (!houseSurface) {
-            printf("Unable to load image! SDL_image Error: %s\n", IMG_GetError());
-            // Gérer l'erreur de chargement de l'image
-        } else {
-            // Réduire la taille de l'image si nécessaire
-            int targetWidth = 40; // Largeur cible
-            int targetHeight = 40; // Hauteur cible
-            SDL_Surface* scaledSurface = SDL_CreateRGBSurface(0, targetWidth, targetHeight, 32, 0, 0, 0, 0);
-            SDL_BlitScaled(houseSurface, NULL, scaledSurface, NULL);
+}
 
-            // Créer une texture à partir de l'image réduite
-            SDL_Texture* houseTexture = SDL_CreateTextureFromSurface(m_renderer, scaledSurface);
-            if (!houseTexture) {
-                printf("Unable to create texture from image! SDL Error: %s\n", SDL_GetError());
-                // Gérer l'erreur de création de la texture
-            } else {
-                SDL_Rect imageRect; // Rectangle pour la position de l'image
 
-                // Utiliser un switch pour déterminer la position en fonction de index
-                switch (index) {
-                    case 0:
-                        imageRect = {50, 500, 70, 90}; // Rectangle pour la première position
-                        break;
-                    case 1:
-                        imageRect = {100, 300, 70, 90}; // Rectangle pour la deuxième position
-                        break;
-                    case 2:
-                        imageRect = {100, 300, 70, 90}; // Rectangle pour la deuxième position
-                        break;
-                    case 3:
-                        imageRect = {100, 300, 70, 90}; // Rectangle pour la deuxième position
-                        break;
-                }        
-                // Afficher l'image aux différentes positions
-                SDL_RenderCopy(m_renderer, houseTexture, NULL, &imageRect);
-                // Libérer la mémoire de la texture et de la surface
-                SDL_DestroyTexture(houseTexture);
+void Renderer::renderMairieAffiche() {
+    SDL_Rect imageRect;
+
+    // Charger l'image
+    SDL_Surface* houseSurface = IMG_Load("mairie.png");
+
+    if (!houseSurface) {
+        printf("Unable to load image! SDL_image Error: %s\n", IMG_GetError());
+        // Gérer l'erreur de chargement de l'image
+    } 
+    else {
+        // Activer la transparence si nécessaire
+        SDL_SetColorKey(houseSurface, SDL_TRUE, SDL_MapRGB(houseSurface->format, 0, 0, 0));
+
+        // Réduire la taille de l'image si nécessaire
+        int targetWidth = 90; // Largeur cible
+        int targetHeight = 90; // Hauteur cible
+        SDL_Surface* scaledSurface = SDL_CreateRGBSurfaceWithFormat(0, targetWidth, targetHeight, 32, houseSurface->format->format);
+        SDL_BlitScaled(houseSurface, NULL, scaledSurface, NULL);
+
+        // Créer une texture à partir de l'image réduite
+        SDL_Texture* houseTexture = SDL_CreateTextureFromSurface(m_renderer, scaledSurface);
+        if (!houseTexture) {
+            printf("Unable to create texture from image! SDL Error: %s\n", SDL_GetError());
+            // Gérer l'erreur de création de la texture
+        } 
+        else {
+            // Configurer le mode de blending pour la transparence
+            SDL_SetTextureBlendMode(houseTexture, SDL_BLENDMODE_BLEND);
+            
+            imageRect = {330, 500, 90, 90}; // Rectangle pour la première position
+
+            // Afficher l'image aux différentes positions
+            SDL_RenderCopy(m_renderer, houseTexture, NULL, &imageRect);
+
+            // Libérer la mémoire de la texture et de la surface
+            SDL_DestroyTexture(houseTexture);
+        }
+        SDL_FreeSurface(scaledSurface);
+        SDL_FreeSurface(houseSurface);            
+    }
+}
+
+void Renderer::renderEntreeAffiche(std::vector<int>& entrees){
+    SDL_Rect imageRect;
+
+    // Charger et afficher les images en fonction du type d'hôtel
+    for(int index = 0; index < entrees.size(); index++) {
+        int i = entrees[index];
+        if(i != -1) {
+            // Charger l'image appropriée en fonction du type d'hôtel
+            SDL_Surface* houseSurface = nullptr;
+            if(i == 0) {
+                houseSurface = IMG_Load("entrance.png");
+                //printf("Affichage de l'hôtel de base\n");
+            } else if(i == 1) {
+                houseSurface = IMG_Load("hotel_annexe_1.png"); //rien pour l'instant
+                //printf("Affichage de l'annexe d'hôtel\n");
             }
 
-            // Libérer la mémoire de la surface originale et de la surface réduite
-            SDL_FreeSurface(scaledSurface);
-            SDL_FreeSurface(houseSurface);
+            // Vérifier si l'image a été chargée correctement
+            if (!houseSurface) {
+                printf("Unable to load image! SDL_image Error: %s\n", IMG_GetError());
+                // Gérer l'erreur de chargement de l'image
+            } else {
+                // Réduire la taille de l'image si nécessaire
+                int targetWidth = 80; // Largeur cible
+                int targetHeight = 80; // Hauteur cible
+                SDL_Surface* scaledSurface = SDL_CreateRGBSurfaceWithFormat(0, targetWidth, targetHeight, 32, houseSurface->format->format);
+                SDL_BlitScaled(houseSurface, NULL, scaledSurface, NULL);
+
+                // Créer une texture à partir de l'image réduite
+                SDL_Texture* houseTexture = SDL_CreateTextureFromSurface(m_renderer, scaledSurface);
+                if (!houseTexture) {
+                    printf("Unable to create texture from image! SDL Error: %s\n", SDL_GetError());
+                    // Gérer l'erreur de création de la texture
+                } else {
+                    // Configurer le mode de blending pour la transparence
+                    SDL_SetTextureBlendMode(houseTexture, SDL_BLENDMODE_BLEND);
+
+                    // Définir le rectangle de destination en fonction de l'index
+                    switch (index) {
+                        case 0:
+                            imageRect = {200, 350, targetWidth, targetHeight}; // Rectangle pour la première position
+                            break;
+                        case 1:
+                            imageRect = {200, 150, targetWidth, targetHeight}; // Rectangle pour la deuxième position
+                            break;
+                        case 2:
+                            imageRect = {450, 150, targetWidth, targetHeight}; // Rectangle pour la troisième position
+                            break;
+                        case 3:
+                            imageRect = {450, 350, targetWidth, targetHeight}; // Rectangle pour la quatrième position
+                            break;
+                    }
+
+                    // Afficher l'image aux différentes positions
+                    SDL_RenderCopy(m_renderer, houseTexture, NULL, &imageRect);
+
+                    // Libérer la mémoire de la texture
+                    SDL_DestroyTexture(houseTexture);
+                }
+
+                // Libérer la mémoire des surfaces
+                SDL_FreeSurface(scaledSurface);
+                SDL_FreeSurface(houseSurface);
+            }
         }
     }
-}*/
-
+}
 
