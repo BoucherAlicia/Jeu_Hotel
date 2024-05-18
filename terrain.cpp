@@ -75,10 +75,11 @@ const Terrain* Terrain::getTerrainAdjacent(int numeroCase) const {
     int terrainIndex = getTerrainIndex(numeroCase);
     if (terrainIndex != -1) {
         terrains[terrainIndex].afficherInfo();
+        return &terrains[terrainIndex];
     } else {
         std::cerr << "Erreur : numeroCase invalide." << std::endl;
+        throw std::runtime_error("NumeroCase invalide.");
     }
-    //return nullptr;
 }
 
 bool Terrain::estOccupe() const {
