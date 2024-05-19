@@ -9,10 +9,11 @@
 void acheterHotel(Joueur& joueurs, std::vector<int>& typeHotel, Hotel& hotel, Terrain& terrain, int i, int index, int numerocase, Renderer& gameRenderer, std::vector<int>& entrees)
 {
     std::string reponse;
+    DeSpecial deSpecial;
     std::vector<std::string> phrases; // Tableau pour stocker les phrases à afficher
     if (joueurs.getArgent(i) >= 1000 && ((typeHotel[index] == -1) || (typeHotel[index] == 0))) {
-        phrases={"Est-ce que vous voulez construire un hotel pour 1000 euros ? (oui/non)"};
-        gameRenderer.renderGame(joueurs, phrases, 0,0, typeHotel, entrees);
+        phrases = {"Est-ce que vous voulez construire un hotel pour 1000 euros ? (oui/non)"};
+        gameRenderer.renderGame(joueurs, phrases, 0, -1, typeHotel, entrees);
         bool choixFait = false;
         while (!choixFait) {
             SDL_Event event;
@@ -35,28 +36,113 @@ void acheterHotel(Joueur& joueurs, std::vector<int>& typeHotel, Hotel& hotel, Te
             }
         }
         if (reponse == "oui") {
-            joueurs.retirerArgent(i, 1000);
-            if(typeHotel[index] == -1){
-                typeHotel[index] = 0;
+            phrases = {"Vous voulez acheter un hotel.", "Vous devez lancer le de special :"};
+            gameRenderer.renderGame(joueurs, phrases, 0, -1, typeHotel, entrees);
+            int resultatDe_special = -1; // Initialize with an invalid value
+            while (resultatDe_special == -1) {
+                SDL_Event event;
+                while (SDL_PollEvent(&event)) {
+                    if (event.type == SDL_QUIT) {
+                        // Quitter si l'utilisateur ferme la fenêtre
+                        return;
+                    } else if (event.type == SDL_MOUSEBUTTONDOWN) {
+                        int mouseX, mouseY;
+                        SDL_GetMouseState(&mouseX, &mouseY);
+
+                        // Vérifiez si le clic est dans la zone du bouton "de special"
+                        if (mouseX >= 800 && mouseX <= 950 && mouseY >= 100 && mouseY <= 150) {
+                            // Clic détecté dans la zone "Jouer le dé spécial", donc lancer le dé spécial
+                            resultatDe_special = deSpecial.lanceDe();
+                            gameRenderer.renderGame(joueurs, phrases, 0, resultatDe_special, typeHotel, entrees);
+                            
+                            std::vector<std::string> phrases2;
+                            std::vector<std::string> totalPhrases;
+                            
+                            switch (resultatDe_special) {
+                                case 0: // Rouge
+                                    phrases2 = {
+                                        "Le de est rouge, vous ne pouvez pas acheter d'hotel.",
+                                        "Dommage pour vous, retentez votre chance une prochaine fois...",
+                                    };
+                                    totalPhrases.insert(totalPhrases.end(), phrases.begin(), phrases.end());
+                                    totalPhrases.insert(totalPhrases.end(), phrases2.begin(), phrases2.end());
+                                    gameRenderer.renderGame(joueurs, totalPhrases, 0, resultatDe_special, typeHotel, entrees);
+                                    break;
+                                
+                                case 1: // Vert
+                                case 2:
+                                case 3:
+                                    joueurs.retirerArgent(i, 1000);
+                                    if (typeHotel[index] == -1) {
+                                        typeHotel[index] = 0;
+                                    } else {
+                                        typeHotel[index] = 1;
+                                    }
+                                    hotel.construireHotel(index);
+                                    terrain.construit(numerocase);
+                                    phrases2 = {
+                                        "Le de est vert, vous pouvez acheter l'hotel a 1000 euros.",
+                                        "Vous avez construit un hotel",
+                                        "Vous avez maintenant " + std::to_string(joueurs.getArgent(i)) + " euros"
+                                    };
+                                    totalPhrases.insert(totalPhrases.end(), phrases.begin(), phrases.end());
+                                    totalPhrases.insert(totalPhrases.end(), phrases2.begin(), phrases2.end());
+                                    gameRenderer.renderGame(joueurs, totalPhrases, 0, resultatDe_special, typeHotel, entrees);
+                                    break;
+                                
+                                case 4: // Gratuit
+                                    if (typeHotel[index] == -1) {
+                                        typeHotel[index] = 0;
+                                    } else {
+                                        typeHotel[index] = 1;
+                                    }
+                                    hotel.construireHotel(index);
+                                    terrain.construit(numerocase);
+                                    phrases2 = {
+                                        "Le de est H (gratuit), vous avez l'hotel gratuitement !",
+                                        "Vous avez construit un hotel",
+                                        "Vous avez toujours " + std::to_string(joueurs.getArgent(i)) + " euros"
+                                    };
+                                    totalPhrases.insert(totalPhrases.end(), phrases.begin(), phrases.end());
+                                    totalPhrases.insert(totalPhrases.end(), phrases2.begin(), phrases2.end());
+                                    gameRenderer.renderGame(joueurs, totalPhrases, 0, resultatDe_special, typeHotel, entrees);
+                                    break;
+                                
+                                case 5: // Double
+                                    joueurs.retirerArgent(i, 2000);
+                                    if (typeHotel[index] == -1) {
+                                        typeHotel[index] = 0;
+                                    } else {
+                                        typeHotel[index] = 1;
+                                    }
+                                    hotel.construireHotel(index);
+                                    terrain.construit(numerocase);
+                                    phrases2 = {
+                                        "Le de est 2D (double), vous devez payer 2000 euros pour acheter l'hotel.",
+                                        "Vous avez construit un hotel",
+                                        "Vous avez maintenant " + std::to_string(joueurs.getArgent(i)) + " euros"
+                                    };
+                                    totalPhrases.insert(totalPhrases.end(), phrases.begin(), phrases.end());
+                                    totalPhrases.insert(totalPhrases.end(), phrases2.begin(), phrases2.end());
+                                    gameRenderer.renderGame(joueurs, totalPhrases, 0, resultatDe_special, typeHotel, entrees);
+                                    break;
+                                
+                                default:
+                                    phrases2 = {
+                                        "Vous n'avez pas lance le de.",
+                                    };
+                                    totalPhrases.insert(totalPhrases.end(), phrases.begin(), phrases.end());
+                                    totalPhrases.insert(totalPhrases.end(), phrases2.begin(), phrases2.end());
+                                    gameRenderer.renderGame(joueurs, totalPhrases, 0, resultatDe_special, typeHotel, entrees);
+                            }
+                        }
+                    }
+                }
             }
-            else {
-                typeHotel[index] = 1;
-            }
-            hotel.construireHotel(index);
-            terrain.construit(numerocase);
-            std::vector<std::string> phrases2 = {
-                "Vous avez construit un hotel",
-                "Vous avez maintenant " + std::to_string(joueurs.getArgent(i)) + " euros"
-            };
-            std::vector<std::string> totalPhrases;
-            totalPhrases.insert(totalPhrases.end(), phrases.begin(), phrases.end());
-            totalPhrases.insert(totalPhrases.end(), phrases2.begin(), phrases2.end());
-            gameRenderer.renderGame(joueurs, totalPhrases, 0, -1, typeHotel, entrees);
-            
         }
     } else {
-        phrases={"Vous avez decide de ne pas construire d'hotel."};
-        gameRenderer.renderGame(joueurs, phrases, 0,0, typeHotel, entrees);
+        phrases = {"Vous avez decide de ne pas construire d'hotel."};
+        gameRenderer.renderGame(joueurs, phrases, 0, -1, typeHotel, entrees);
     }
 }
 
@@ -190,11 +276,7 @@ void jouerPartie(SDL_Renderer* renderer, Renderer& gameRenderer) {
                     if (event.type == SDL_MOUSEBUTTONDOWN) {
                         int mouseX, mouseY;
                         SDL_GetMouseState(&mouseX, &mouseY);
-                        if (mouseX >= 800 && mouseX <= 950 && mouseY >= 100 && mouseY <= 150) {
-                            // Clic détecté dans la zone "Jouer le dé spécial", donc lancer le dé spécial
-                            resultatDe_special = deSpecial.lanceDe();
-                        }
-                        else if (mouseX >= 800 && mouseX <= 950 && mouseY >= 10 && mouseY <= 60) {
+                        if (mouseX >= 800 && mouseX <= 950 && mouseY >= 10 && mouseY <= 60) {
                             // Clic détecté dans la zone "Jouer le dé", donc lancer le dé
                             int anciennePosition = joueurs.getPosition(i);
                             resultatDe = deNormal.lanceDe();
@@ -209,7 +291,7 @@ void jouerPartie(SDL_Renderer* renderer, Renderer& gameRenderer) {
                             passerParBanque(joueurs, i, anciennePosition, nouvellePosition, typeHotel, gameRenderer, entrees);
                             acheterEntreesHotels(joueurs, i, anciennePosition, nouvellePosition, typeHotel, gameRenderer, entrees, tableauBool, occupTerrain);
                             std::vector<std::string> positionPhrases = {
-                                "Le joueur est a maintenant a la case " + std::to_string(joueurs.getPosition(i))
+                                "Le joueur est maintenant a la case " + std::to_string(joueurs.getPosition(i))
                             };
 
                             if (joueurs.getPosition(i) != joueurs.getPosition((i + 1) % 2)) {
@@ -226,7 +308,7 @@ void jouerPartie(SDL_Renderer* renderer, Renderer& gameRenderer) {
                                 std::vector<std::string> memeCasePhrases = {
                                     "Le joueur se retrouve sur la meme case qu'un autre joueur.",
                                     "Il avance donc d'une case supplementaire.",
-                                    "Le joueur est a maintenant a la case " + std::to_string(joueurs.getPosition(i))
+                                    "Le joueur est maintenant a la case " + std::to_string(joueurs.getPosition(i))
                                 };
                                 std::vector<std::string> totalPhrases3;
                                 totalPhrases3.insert(totalPhrases3.end(), tourPhrases.begin(), tourPhrases.end());
