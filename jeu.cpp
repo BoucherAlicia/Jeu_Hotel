@@ -6,14 +6,14 @@
 #include "plateau.hpp"
 #include "hotel.hpp"
 
-void acheterHotel(Joueur& joueurs, std::vector<int>& typeHotel, Hotel& hotel, Terrain& terrain, int i, int index, int numerocase, Renderer& gameRenderer, std::vector<int>& entrees)
+void acheterHotel(Joueur& joueurs, std::vector<int>& typeHotel, Hotel& hotel, Terrain& terrain, int i, int index, int numerocase, Renderer& gameRenderer, std::vector<int>& entrees, const std::vector<bool>& tableauBool, const std::vector<int>& occupTerrain)
 {
     std::string reponse;
     DeSpecial deSpecial;
     std::vector<std::string> phrases; // Tableau pour stocker les phrases à afficher
     if (joueurs.getArgent(i) >= 1000 && ((typeHotel[index] == -1) || (typeHotel[index] == 0))) {
         phrases = {"Est-ce que vous voulez construire un hotel pour 1000 euros ? (oui/non)"};
-        gameRenderer.renderGame(joueurs, phrases, 0, -1, typeHotel, entrees);
+        gameRenderer.renderGame(joueurs, phrases, 0, -1, typeHotel, entrees, tableauBool, occupTerrain);
         bool choixFait = false;
         while (!choixFait) {
             SDL_Event event;
@@ -37,7 +37,7 @@ void acheterHotel(Joueur& joueurs, std::vector<int>& typeHotel, Hotel& hotel, Te
         }
         if (reponse == "oui") {
             phrases = {"Vous voulez acheter un hotel.", "Vous devez lancer le de special :"};
-            gameRenderer.renderGame(joueurs, phrases, 0, -1, typeHotel, entrees);
+            gameRenderer.renderGame(joueurs, phrases, 0, -1, typeHotel, entrees, tableauBool, occupTerrain);
             int resultatDe_special = -1; // Initialize with an invalid value
             while (resultatDe_special == -1) {
                 SDL_Event event;
@@ -53,7 +53,7 @@ void acheterHotel(Joueur& joueurs, std::vector<int>& typeHotel, Hotel& hotel, Te
                         if (mouseX >= 800 && mouseX <= 950 && mouseY >= 100 && mouseY <= 150) {
                             // Clic détecté dans la zone "Jouer le dé spécial", donc lancer le dé spécial
                             resultatDe_special = deSpecial.lanceDe();
-                            gameRenderer.renderGame(joueurs, phrases, 0, resultatDe_special, typeHotel, entrees);
+                            gameRenderer.renderGame(joueurs, phrases, 0, resultatDe_special, typeHotel, entrees, tableauBool, occupTerrain);
                             
                             std::vector<std::string> phrases2;
                             std::vector<std::string> totalPhrases;
@@ -66,7 +66,7 @@ void acheterHotel(Joueur& joueurs, std::vector<int>& typeHotel, Hotel& hotel, Te
                                     };
                                     totalPhrases.insert(totalPhrases.end(), phrases.begin(), phrases.end());
                                     totalPhrases.insert(totalPhrases.end(), phrases2.begin(), phrases2.end());
-                                    gameRenderer.renderGame(joueurs, totalPhrases, 0, resultatDe_special, typeHotel, entrees);
+                                    gameRenderer.renderGame(joueurs, totalPhrases, 0, resultatDe_special, typeHotel, entrees, tableauBool, occupTerrain);
                                     break;
                                 
                                 case 1: // Vert
@@ -87,7 +87,7 @@ void acheterHotel(Joueur& joueurs, std::vector<int>& typeHotel, Hotel& hotel, Te
                                     };
                                     totalPhrases.insert(totalPhrases.end(), phrases.begin(), phrases.end());
                                     totalPhrases.insert(totalPhrases.end(), phrases2.begin(), phrases2.end());
-                                    gameRenderer.renderGame(joueurs, totalPhrases, 0, resultatDe_special, typeHotel, entrees);
+                                    gameRenderer.renderGame(joueurs, totalPhrases, 0, resultatDe_special, typeHotel, entrees, tableauBool, occupTerrain);
                                     break;
                                 
                                 case 4: // Gratuit
@@ -105,7 +105,7 @@ void acheterHotel(Joueur& joueurs, std::vector<int>& typeHotel, Hotel& hotel, Te
                                     };
                                     totalPhrases.insert(totalPhrases.end(), phrases.begin(), phrases.end());
                                     totalPhrases.insert(totalPhrases.end(), phrases2.begin(), phrases2.end());
-                                    gameRenderer.renderGame(joueurs, totalPhrases, 0, resultatDe_special, typeHotel, entrees);
+                                    gameRenderer.renderGame(joueurs, totalPhrases, 0, resultatDe_special, typeHotel, entrees, tableauBool, occupTerrain);
                                     break;
                                 
                                 case 5: // Double
@@ -124,7 +124,7 @@ void acheterHotel(Joueur& joueurs, std::vector<int>& typeHotel, Hotel& hotel, Te
                                     };
                                     totalPhrases.insert(totalPhrases.end(), phrases.begin(), phrases.end());
                                     totalPhrases.insert(totalPhrases.end(), phrases2.begin(), phrases2.end());
-                                    gameRenderer.renderGame(joueurs, totalPhrases, 0, resultatDe_special, typeHotel, entrees);
+                                    gameRenderer.renderGame(joueurs, totalPhrases, 0, resultatDe_special, typeHotel, entrees, tableauBool, occupTerrain);
                                     break;
                                 
                                 default:
@@ -133,7 +133,7 @@ void acheterHotel(Joueur& joueurs, std::vector<int>& typeHotel, Hotel& hotel, Te
                                     };
                                     totalPhrases.insert(totalPhrases.end(), phrases.begin(), phrases.end());
                                     totalPhrases.insert(totalPhrases.end(), phrases2.begin(), phrases2.end());
-                                    gameRenderer.renderGame(joueurs, totalPhrases, 0, resultatDe_special, typeHotel, entrees);
+                                    gameRenderer.renderGame(joueurs, totalPhrases, 0, resultatDe_special, typeHotel, entrees, tableauBool, occupTerrain);
                             }
                         }
                     }
@@ -142,11 +142,11 @@ void acheterHotel(Joueur& joueurs, std::vector<int>& typeHotel, Hotel& hotel, Te
         }
     } else {
         phrases = {"Vous avez decide de ne pas construire d'hotel."};
-        gameRenderer.renderGame(joueurs, phrases, 0, -1, typeHotel, entrees);
+        gameRenderer.renderGame(joueurs, phrases, 0, -1, typeHotel, entrees, tableauBool, occupTerrain);
     }
 }
 
-void passerParBanque(Joueur& joueurs, int joueurIndex, int anciennePosition, int nouvellePosition,std::vector<int>& typeHotel, Renderer& gameRenderer, std::vector<int>& entrees) {
+void passerParBanque(Joueur& joueurs, int joueurIndex, int anciennePosition, int nouvellePosition,std::vector<int>& typeHotel, Renderer& gameRenderer, std::vector<int>& entrees, const std::vector<bool>& tableauBool, const std::vector<int>& occupTerrain) {
     int caseBanque = 12;
     int nombreCases = 30; // Supposons que le plateau a 40 cases, modifiez ceci selon votre jeu.
 
@@ -154,7 +154,7 @@ void passerParBanque(Joueur& joueurs, int joueurIndex, int anciennePosition, int
     if ((anciennePosition < caseBanque && nouvellePosition >= caseBanque)) {
         joueurs.ajouterArgent(joueurIndex, 1000);
         std::vector<std::string> phrasesTerrain2 = { joueurs.getNom(joueurIndex) + " passe par la banque et gagne 1000 euros !!!!" };
-        gameRenderer.renderGame(joueurs, phrasesTerrain2, 0, -1, typeHotel, entrees);
+        gameRenderer.renderGame(joueurs, phrasesTerrain2, 0, -1, typeHotel, entrees, tableauBool, occupTerrain);
     }
 }
 
@@ -166,11 +166,11 @@ void acheterEntreesHotels(Joueur& joueurs, int joueurIndex, int anciennePosition
     // Vérifier si le joueur est entre les cases 27 et 30
     if(anciennePosition >= caseDebut && anciennePosition <= caseFin){
         phrases1 = {"Vous n'avez plus le droit d'acheter des entrees pour ce tour."};
-        gameRenderer.renderGame(joueurs, phrases1, 0, -1, typeHotel, entrees);
+        gameRenderer.renderGame(joueurs, phrases1, 0, -1, typeHotel, entrees, tableauBool, occupTerrain);
     }
     else if (nouvellePosition >= caseDebut && nouvellePosition <= caseFin) {
         phrases1 = {"Vous etes entre les cases 27 et 30. Voulez vous acheter des entrées pour les hotels que vous occupez ? (oui/non)"};
-        gameRenderer.renderGame(joueurs, phrases1, 0, -1, typeHotel, entrees);
+        gameRenderer.renderGame(joueurs, phrases1, 0, -1, typeHotel, entrees, tableauBool, occupTerrain);
         for(int i = 0; i < tableauBool.size(); i++) {
             if ((tableauBool[i] == true) && (occupTerrain[i] == joueurIndex)) {
                 int show = i + 1;
@@ -206,13 +206,13 @@ void acheterEntreesHotels(Joueur& joueurs, int joueurIndex, int anciennePosition
                         std::vector<std::string> totalPhrases;
                         totalPhrases.insert(totalPhrases.end(), phrases1.begin(), phrases1.end());
                         totalPhrases.insert(totalPhrases.end(), phrases2.begin(), phrases2.end());
-                        gameRenderer.renderGame(joueurs, totalPhrases, 0, -1, typeHotel, entrees);
+                        gameRenderer.renderGame(joueurs, totalPhrases, 0, -1, typeHotel, entrees, tableauBool, occupTerrain);
                     }
                         
                 }
                 else {
                     phrases1 = {"Vous avez decide de ne pas acheter d'entrées pour les hôtels."};
-                    gameRenderer.renderGame(joueurs, phrases1, 0, -1, typeHotel, entrees);
+                    gameRenderer.renderGame(joueurs, phrases1, 0, -1, typeHotel, entrees, tableauBool, occupTerrain);
                 }
             }
         }
@@ -261,7 +261,7 @@ void jouerPartie(SDL_Renderer* renderer, Renderer& gameRenderer) {
             std::vector<std::string> totalPhrases;
             totalPhrases.insert(totalPhrases.end(), tourPhrases.begin(), tourPhrases.end());
             totalPhrases.insert(totalPhrases.end(), joueurPhrases.begin(), joueurPhrases.end());
-            gameRenderer.renderGame(joueurs, totalPhrases, resultatDe, resultatDe_special, typeHotel, entrees);
+            gameRenderer.renderGame(joueurs, totalPhrases, resultatDe, resultatDe_special, typeHotel, entrees, tableauBool, occupTerrain);
             // Attendre que le joueur lance le dé en cliquant sur le plateau
             bool deLance = false;
             while (!deLance) {
@@ -288,7 +288,7 @@ void jouerPartie(SDL_Renderer* renderer, Renderer& gameRenderer) {
                             joueurs.setPosition(i, resultatDe);
                             int nouvellePosition = joueurs.getPosition(i);
                             //increment_Joueur[i] = increment_Joueur[i] + resultatDe;
-                            passerParBanque(joueurs, i, anciennePosition, nouvellePosition, typeHotel, gameRenderer, entrees);
+                            passerParBanque(joueurs, i, anciennePosition, nouvellePosition, typeHotel, gameRenderer, entrees, tableauBool, occupTerrain);
                             acheterEntreesHotels(joueurs, i, anciennePosition, nouvellePosition, typeHotel, gameRenderer, entrees, tableauBool, occupTerrain);
                             std::vector<std::string> positionPhrases = {
                                 "Le joueur est maintenant a la case " + std::to_string(joueurs.getPosition(i))
@@ -300,7 +300,7 @@ void jouerPartie(SDL_Renderer* renderer, Renderer& gameRenderer) {
                                 totalPhrases2.insert(totalPhrases2.end(), tourPhrases.begin(), tourPhrases.end());
                                 totalPhrases2.insert(totalPhrases2.end(), dePhrases.begin(), dePhrases.end());
                                 totalPhrases2.insert(totalPhrases2.end(), positionPhrases.begin(), positionPhrases.end());
-                                gameRenderer.renderGame(joueurs, totalPhrases2, resultatDe, resultatDe_special, typeHotel, entrees);
+                                gameRenderer.renderGame(joueurs, totalPhrases2, resultatDe, resultatDe_special, typeHotel, entrees, tableauBool, occupTerrain);
                             } else {
                                 // Les joueurs sont sur la même case
                                 // Mettre à jour la position du joueur
@@ -315,7 +315,7 @@ void jouerPartie(SDL_Renderer* renderer, Renderer& gameRenderer) {
                                 totalPhrases3.insert(totalPhrases3.end(), dePhrases.begin(), dePhrases.end());
                                 totalPhrases3.insert(totalPhrases3.end(), positionPhrases.begin(), positionPhrases.end());
                                 totalPhrases3.insert(totalPhrases3.end(), memeCasePhrases.begin(), memeCasePhrases.end());
-                                gameRenderer.renderGame(joueurs, totalPhrases3, resultatDe, resultatDe_special, typeHotel, entrees);
+                                gameRenderer.renderGame(joueurs, totalPhrases3, resultatDe, resultatDe_special, typeHotel, entrees, tableauBool, occupTerrain);
                                 SDL_Delay(500);
                             }
                             
@@ -330,17 +330,17 @@ void jouerPartie(SDL_Renderer* renderer, Renderer& gameRenderer) {
                                 // Utilisez le pointeur retourné pour accéder à m_estOccupe
                                 estOccupe = terrainAdjacent->estOccupe();
                                 if(numerocase == 12){
-                                    std::vector<std::string> phrasesTerrain2 = {"Vous etes de passage à la banque" };
-                                    gameRenderer.renderGame(joueurs, phrasesTerrain2, resultatDe, resultatDe_special, typeHotel, entrees);
+                                    std::vector<std::string> phrasesTerrain2 = {"Vous etes de passage a la banque" };
+                                    gameRenderer.renderGame(joueurs, phrasesTerrain2, resultatDe, resultatDe_special, typeHotel, entrees, tableauBool, occupTerrain);
                                 }
                                 else if(numerocase == 27){
-                                    std::vector<std::string> phrasesTerrain2 = {"Vous etes de passage à la mairie" };
-                                    gameRenderer.renderGame(joueurs, phrasesTerrain2, resultatDe, resultatDe_special, typeHotel, entrees);
+                                    std::vector<std::string> phrasesTerrain2 = {"Vous etes de passage a la mairie" };
+                                    gameRenderer.renderGame(joueurs, phrasesTerrain2, resultatDe, resultatDe_special, typeHotel, entrees, tableauBool, occupTerrain);
                                 }
                                 else if ((tableauBool[index] == false) && (joueurs.getArgent(i) >= terrain.getPrix(numerocase))) {
                                     std::cout << "index tableaubool" << tableauBool[index] << std::endl;
                                     std::vector<std::string> phrasesTerrain = {"Le terrain est libre, il est a " + std::to_string(terrain.getPrix(numerocase)) + " euros souhaitez vous l'acheter? (oui/non)"};
-                                    gameRenderer.renderGame(joueurs, phrasesTerrain, resultatDe, resultatDe_special, typeHotel, entrees);
+                                    gameRenderer.renderGame(joueurs, phrasesTerrain, resultatDe, resultatDe_special, typeHotel, entrees, tableauBool, occupTerrain);
                                     bool choixFait = false;
                                     while (!choixFait) {
                                         SDL_Event event;
@@ -373,15 +373,15 @@ void jouerPartie(SDL_Renderer* renderer, Renderer& gameRenderer) {
                                             "Vous avez achete le terrain",
                                             "Vous avez maintenant " + std::to_string(joueurs.getArgent(i)) + " euros"
                                             };
-                                        gameRenderer.renderGame(joueurs, phrasesTerrain2, resultatDe, resultatDe_special, typeHotel, entrees);
+                                        gameRenderer.renderGame(joueurs, phrasesTerrain2, resultatDe, resultatDe_special, typeHotel, entrees, tableauBool, occupTerrain);
                                     
                                         //------------------Achat hotel------------------------
-                                        acheterHotel(joueurs, typeHotel, hotel, terrain, i, index, numerocase, gameRenderer, entrees);
+                                        acheterHotel(joueurs, typeHotel, hotel, terrain, i, index, numerocase, gameRenderer, entrees, tableauBool, occupTerrain);
                                     }
                                 }
                                 else if ((tableauBool[index] == false) && (joueurs.getArgent(i) < terrain.getPrix(numerocase))) {
                                     std::vector<std::string> phrasesTerrain2 = {"Le terrain n'est pas occupe mais vous n'avez pas les moyens pour l'acheter" };
-                                    gameRenderer.renderGame(joueurs, phrasesTerrain2, resultatDe, resultatDe_special, typeHotel, entrees);
+                                    gameRenderer.renderGame(joueurs, phrasesTerrain2, resultatDe, resultatDe_special, typeHotel, entrees, tableauBool, occupTerrain);
                                     //std::cout << "Le terrain n'est pas occupé mais vous n'avez pas les moyens pour l'acheter" << std::endl;
                                 }
                                 else {
@@ -389,12 +389,12 @@ void jouerPartie(SDL_Renderer* renderer, Renderer& gameRenderer) {
                                         
                                         std::vector<std::string> phrasesTerrain = {"Le terrain est deja occupe",
                                         "Vous etes le proprietaire de ce terrain"};
-                                        gameRenderer.renderGame(joueurs, phrasesTerrain, resultatDe, resultatDe_special, typeHotel, entrees);
+                                        gameRenderer.renderGame(joueurs, phrasesTerrain, resultatDe, resultatDe_special, typeHotel, entrees, tableauBool, occupTerrain);
                                         //------------------Achat hotel------------------------
-                                        acheterHotel(joueurs, typeHotel, hotel, terrain, i, index, numerocase, gameRenderer, entrees);
+                                        acheterHotel(joueurs, typeHotel, hotel, terrain, i, index, numerocase, gameRenderer, entrees, tableauBool, occupTerrain);
                                     }
                                     else {
-                                        std::cout << "C'EST LE JOUEUR : " << occupTerrain[index] << "QUI OCCUPE LE TERRAIN" << std::endl;
+                                        //std::cout << "C'EST LE JOUEUR : " << occupTerrain[index] << "QUI OCCUPE LE TERRAIN" << std::endl;
                                         joueurs.retirerArgent(i, prixLoyer[index]);
                                         int deuxiemeJoueur = (i == 0) ? 1 : 0;
                                         joueurs.ajouterArgent(deuxiemeJoueur, prixLoyer[index]);
@@ -404,7 +404,7 @@ void jouerPartie(SDL_Renderer* renderer, Renderer& gameRenderer) {
                                             "Il vous reste " + std::to_string(joueurs.getArgent(i)) + " euros", 
                                             "Il reste a l'autre joueur " + std::to_string(joueurs.getArgent(deuxiemeJoueur)) + " euros",
                                             };
-                                        gameRenderer.renderGame(joueurs, phrasesTerrain, resultatDe, resultatDe_special, typeHotel, entrees);
+                                        gameRenderer.renderGame(joueurs, phrasesTerrain, resultatDe, resultatDe_special, typeHotel, entrees, tableauBool, occupTerrain);
                                         SDL_Delay(1000); // Attendre 3 secondes
                                     }
                                 }
@@ -420,7 +420,7 @@ void jouerPartie(SDL_Renderer* renderer, Renderer& gameRenderer) {
                                 std::vector<std::string> relancePhrases = {
                                     "Vous avez obtenu un 6, vous devez relancer le de : "
                                 };
-                                gameRenderer.renderGame(joueurs, relancePhrases, resultatDe, resultatDe_special, typeHotel, entrees);
+                                gameRenderer.renderGame(joueurs, relancePhrases, resultatDe, resultatDe_special, typeHotel, entrees, tableauBool, occupTerrain);
                                 SDL_Delay(1000); // Attendre un court instant avant de relancer le dé
                             } else {
                                 // Marquer que le dé a été lancé
@@ -439,6 +439,6 @@ void jouerPartie(SDL_Renderer* renderer, Renderer& gameRenderer) {
     std::vector<std::string> finPartiePhrases = {
         "Fin de la partie"
     };
-    gameRenderer.renderGame(joueurs, finPartiePhrases, resultatDe, resultatDe_special, typeHotel, entrees);
+    gameRenderer.renderGame(joueurs, finPartiePhrases, resultatDe, resultatDe_special, typeHotel, entrees, tableauBool, occupTerrain);
     SDL_Delay(3000); // Attendre 3 secondes avant de fermer la fenêtre
 }

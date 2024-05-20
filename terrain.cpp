@@ -21,11 +21,11 @@ int Terrain::getTerrainIndex(int numeroCase) const {
         return -1;
     } else if ((numeroCase >= 1 && numeroCase <= 4) || (numeroCase > 27 && numeroCase <= 30)) {
         return 0;
-    } else if (numeroCase > 4 && numeroCase < 12) {
+    } else if (numeroCase > 4 && numeroCase <= 12) {
         return 1;
     } else if (numeroCase >= 13 && numeroCase < 20) {
         return 2;
-    } else if (numeroCase >= 20 && numeroCase < 27) {
+    } else if (numeroCase >= 20 && numeroCase <= 27) {
         return 3;
     } 
     // else if (numeroCase == 12) { //case banque

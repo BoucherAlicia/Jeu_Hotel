@@ -19,7 +19,7 @@ public:
     Renderer(SDL_Renderer* renderer, int width, int height);
     ~Renderer();
 
-    void renderGame(const Joueur& joueurs, const std::vector<std::string>& phrases, int resultat_de, int resultat_de_special, const std::vector<int>& typeHotel, std::vector<int>& entrees);
+    void renderGame(const Joueur& joueurs, const std::vector<std::string>& phrases, int resultat_de, int resultat_de_special, const std::vector<int>& typeHotel, std::vector<int>& entrees, const std::vector<bool>& tableauBool, const std::vector<int>& occupTerrain);
  
 
 protected:
@@ -39,7 +39,7 @@ protected:
     void renderTrack();
     void renderHotels();
     void renderDe(int resultat_de, int resultat_de_special);
-    void renderTable(const Joueur& joueurs);
+    void renderTable(const Joueur& joueurs, const std::vector<int>& occupTerrain, std::vector<int> typeHotel);
     void renderCases();
     void afficherPion(const Joueur& joueurs) const;
     void renderTerminal(const std::vector<std::string>& phrases);
