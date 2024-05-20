@@ -1,6 +1,9 @@
+#ifndef DE_HPP
+#define DE_HPP
+
 #include "objet.hpp"
 #include <iostream>
-#include <cstdlib> //pour le rand
+//#include <cstdlib> //pour le rand
 
 class De : public Objet {
 public:
@@ -13,6 +16,6 @@ public:
         lanceDe(); // Appelle la fonction lanceDe lors de l'utilisation
     }
 };
-
+#endif
 
 

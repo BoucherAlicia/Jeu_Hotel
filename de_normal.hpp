@@ -1,3 +1,6 @@
+#ifndef DENORMAL_HPP
+#define DENORMAL_HPP
+
 #include "de.hpp"
 #include <iostream>
 #include <cstdlib> //pour le rand
@@ -14,3 +17,4 @@ public:
         return resultat;
     }
 };
+#endif

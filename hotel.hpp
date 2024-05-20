@@ -6,12 +6,20 @@
 #include "terrain.hpp" // Inclure la classe de base Terrain
 
 class Hotel : public Terrain { // Hotel hérite de Terrain
+
+private:
+    std::string m_propriete; // Propriétaire de l'hôtel
+    int m_indexTerrain; // Index du terrain
+    std::vector<Hotel> hotels;
+
 public:
     // Constructeurs
-    Hotel(const std::string& nom, int prix, const std::string& propriete);
+    //Hotel();
+    Hotel(const std::string& nom);
 
     // Méthode pour construire un hôtel par un joueur donné
-    void construireHotel(const std::string& joueur);
+    void construireHotel(int m_indexTerrain);
 };
 
 #endif
+

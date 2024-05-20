@@ -13,14 +13,13 @@ protected:
     bool m_estConstruit; // Indique si le terrain est construit
     bool m_estOccupe;    // Indique si le terrain est occupé par un joueur
     std::vector<Terrain> terrains;
-    std::string m_propriete; // Propriété du terrain
 
 public:
     // Constructeur
     Terrain();
 
     // Constructeur avec nom et prix
-    Terrain(const std::string &nom, int prix, const std::string &propriete);
+    Terrain(const std::string &nom, int prix);
 
     // Getters
     std::string getNom(int numeroCase) const;
@@ -33,10 +32,12 @@ public:
     void construit(int numeroCase);
     void afficherInfo() const;
     const Terrain *getTerrainAdjacent(int numeroCase) const;
+    int getTerrainIndex(int numeroCase) const;
+    void updateTerrainStatus(int numeroCase, bool estOccupe);
 
 private:
-    void updateTerrainStatus(int numeroCase, bool estOccupe);
-    int getTerrainIndex(int numeroCase) const;
+    
+    
 };
 
 #endif
