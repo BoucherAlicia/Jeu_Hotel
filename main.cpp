@@ -5,19 +5,6 @@
 #include "plateau.hpp"
 
 int main() {
-    /*
-    //Tests terrain.cpp
-    Terrain terrain;
-    int numerocase = 1;
-    terrain.getTerrainAdjacent(numerocase);
-    terrain.occupe(numerocase);
-    terrain.getTerrainAdjacent(numerocase);
-    numerocase = 7;
-    terrain.getTerrainAdjacent(numerocase); */
-
-    //Tests avec joueurs
-/*---------------------------------------------------------------------------------------------------------------------*/
- 
 
     // Initialize SDL
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {

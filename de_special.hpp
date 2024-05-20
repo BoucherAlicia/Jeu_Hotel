@@ -6,6 +6,7 @@
 
 class DeSpecial : public De {
 public:
+    DeSpecial(){};
     // Redéfinition de la fonction lanceDe pour le dé spécial
     int lanceDe() override {
         srand(time(NULL));
@@ -15,7 +16,7 @@ public:
         int index = rand() % 6;
 
         // Affiche la face sélectionnée
-        std::cout << "Le dé spécial affiche : " << faces[index] << std::endl;
+        //std::cout << "Le dé spécial affiche : " << faces[index] << std::endl;
         return index;
     }
 };

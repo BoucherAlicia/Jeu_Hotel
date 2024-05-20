@@ -1,18 +1,17 @@
 #ifndef DE_HPP
 #define DE_HPP
 
-#include "objet.hpp"
 #include <iostream>
 //#include <cstdlib> //pour le rand
 
-class De : public Objet {
+class De {
 public:
     De(){};
     // Fonction pour lancer le dé
     virtual int lanceDe() = 0;
 
     // Implémentation de la méthode virtuelle utiliser
-    void utiliser() override {
+    virtual void utiliser() {
         lanceDe(); // Appelle la fonction lanceDe lors de l'utilisation
     }
 };

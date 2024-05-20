@@ -8,6 +8,6 @@ void Joueur::setPosition(int joueur, int resultatDe) {
     if (positions[joueur] == 0) {
         positions[joueur] = 30;
     }
-    std::cout << "Vous êtes est maintenant à la case " << positions[joueur]<< std::endl;
+    //std::cout << "Vous êtes est maintenant à la case " << positions[joueur]<< std::endl;
 
 }
