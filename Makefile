@@ -1,10 +1,11 @@
+
 CPP=g++
 LD=g++
 
-CPPFLAGS=-std=c++14
-LDFLAGS=-std=c++14
-LIBS=-lSDL2 -lSDL2_ttf -lSDL2_image
+CPPFLAGS=-std=c++14 -g
+LDFLAGS=-std=c++14 -g
 
+LIBS=-lSDL2 -lSDL2_ttf -lSDL2_image
 
 all: hotel
 
@@ -31,5 +32,7 @@ case.o: case.hpp case.cpp
 
 hotel.o: hotel.hpp hotel.cpp
 	$(CPP) $(CPPFLAGS) -c hotel.cpp
+
 clean:
 	rm -f *.o hotel
+
