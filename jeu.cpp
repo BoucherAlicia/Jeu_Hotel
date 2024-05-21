@@ -169,17 +169,20 @@ void acheterEntreesHotels(Joueur& joueurs, int joueurIndex, int anciennePosition
     if(anciennePosition >= caseDebut && anciennePosition <= caseFin){
         phrases1 = {"Vous n'avez plus le droit d'acheter des entrees pour ce tour."};
         gameRenderer.renderGame(joueurs, phrases1, 0, -1, typeHotel, entrees, tableauBool, occupTerrain);
+        return;
     }
-    else if (nouvellePosition >= caseDebut && nouvellePosition <= caseFin) {
+    if (nouvellePosition >= caseDebut && nouvellePosition <= caseFin) {
         phrases1 = {"Vous etes entre les cases 27 et 30.",
         "Voulez vous acheter des entrees a 500 euros pour les hotels que vous occupez ? (oui/non)"};
         gameRenderer.renderGame(joueurs, phrases1, 0, -1, typeHotel, entrees, tableauBool, occupTerrain);
+        
         for(int i = 0; i < tableauBool.size(); i++) {
             if ((tableauBool[i] == true) && (occupTerrain[i] == joueurIndex) && (typeHotel[i] == 1)) {
                 int show = i + 1;
                 std::vector<std::string> phrases2 = {"Vous etes elligible pour acheter des entrees pour les hotels que vous occupez.", 
                 "Voulez-vous acheter des entrees pour l'hotel " + std::to_string(show) + " ? (oui/non)"}; 
-                
+                gameRenderer.renderGame(joueurs, phrases2, 0, -1, typeHotel, entrees, tableauBool, occupTerrain);
+                    
                 bool choixFait = false;
                 while (!choixFait) {
                     SDL_Event event;
@@ -205,16 +208,15 @@ void acheterEntreesHotels(Joueur& joueurs, int joueurIndex, int anciennePosition
                     if(entrees[i] == -1){
                         joueurs.retirerArgent(joueurIndex, 500);
                         entrees[i] = 0;
-                        std::cout << "entree sur " << i << " est de " << entrees[i] << std::endl;
+                        //std::cout << "entree sur " << i << " est de " << entrees[i] << std::endl;
                         std::vector<std::string> totalPhrases;
                         totalPhrases.insert(totalPhrases.end(), phrases1.begin(), phrases1.end());
                         totalPhrases.insert(totalPhrases.end(), phrases2.begin(), phrases2.end());
                         gameRenderer.renderGame(joueurs, totalPhrases, 0, -1, typeHotel, entrees, tableauBool, occupTerrain);
                     }
-                        
                 }
                 else {
-                    phrases1 = {"Vous avez decide de ne pas acheter d'entrées pour les hôtels."};
+                    phrases1 = {"Vous avez decide de ne pas acheter d'entrees pour les hotels."};
                     gameRenderer.renderGame(joueurs, phrases1, 0, -1, typeHotel, entrees, tableauBool, occupTerrain);
                 }
             }
@@ -254,7 +256,10 @@ void jouerPartie(SDL_Renderer* renderer, Renderer& gameRenderer) {
     std::srand(std::time(nullptr)); //initialise le générateur de nombres aléatoires
     int joueurActuel = std::rand() % 2; //choisit un nombre aléatoire entre 0 et 1
     std::vector<int> players = {joueurActuel, (joueurActuel == 0) ? 1 : 0};
-    std::vector<std::string> phraseDebut = {"C'est " + joueurs.getNom(players[0]) + " qui commence la partie."};
+    std::vector<std::string> phraseDebut = {
+        "Bienvenue dans le jeu HOTEL BOUCHER-ELMORR.", 
+        "Nous allons tirer au sort le joueur qui commencera la partie.",
+        "C'est " + joueurs.getNom(players[0]) + " qui commence la partie."};
     gameRenderer.renderGame(joueurs, phraseDebut, resultatDe, resultatDe_special, typeHotel, entrees, tableauBool, occupTerrain);
     SDL_Delay(2000);
 
@@ -276,10 +281,7 @@ void jouerPartie(SDL_Renderer* renderer, Renderer& gameRenderer) {
                 joueurs.getNom(i) + " est a la case " + std::to_string(joueurs.getPosition(i)),
                 "Veuillez lancer le de : "
             };
-            std::vector<std::string> totalPhrases;
-            totalPhrases.insert(totalPhrases.end(), tourPhrases.begin(), tourPhrases.end());
-            totalPhrases.insert(totalPhrases.end(), joueurPhrases.begin(), joueurPhrases.end());
-            gameRenderer.renderGame(joueurs, totalPhrases, resultatDe, resultatDe_special, typeHotel, entrees, tableauBool, occupTerrain);
+            gameRenderer.renderGame(joueurs, joueurPhrases, resultatDe, resultatDe_special, typeHotel, entrees, tableauBool, occupTerrain);
             // Attendre que le joueur lance le dé en cliquant sur le plateau
             bool deLance = false;
             while (!deLance) {
@@ -343,7 +345,7 @@ void jouerPartie(SDL_Renderer* renderer, Renderer& gameRenderer) {
                             int numerocase = joueurs.getPosition(i);
                             const Terrain* terrainAdjacent = terrain.getTerrainAdjacent(numerocase);
                             int index = terrain.getTerrainIndex(numerocase);
-                            std::cout << "index : " << index << std::endl;
+                            //std::cout << "index : " << index << std::endl;
                             if (terrainAdjacent != nullptr) {
                                 // Utilisez le pointeur retourné pour accéder à m_estOccupe
                                 estOccupe = terrainAdjacent->estOccupe();
@@ -356,7 +358,7 @@ void jouerPartie(SDL_Renderer* renderer, Renderer& gameRenderer) {
                                     gameRenderer.renderGame(joueurs, phrasesTerrain2, resultatDe, resultatDe_special, typeHotel, entrees, tableauBool, occupTerrain);
                                 }
                                 else if ((tableauBool[index] == false) && (joueurs.getArgent(i) >= terrain.getPrix(numerocase))) {
-                                    std::cout << "index tableaubool" << tableauBool[index] << std::endl;
+                                    //std::cout << "index tableaubool" << tableauBool[index] << std::endl;
                                     std::vector<std::string> phrasesTerrain = {"Le terrain est libre, il est a " + std::to_string(terrain.getPrix(numerocase)) + " euros souhaitez vous l'acheter? (oui/non)"};
                                     gameRenderer.renderGame(joueurs, phrasesTerrain, resultatDe, resultatDe_special, typeHotel, entrees, tableauBool, occupTerrain);
                                     bool choixFait = false;
@@ -422,7 +424,7 @@ void jouerPartie(SDL_Renderer* renderer, Renderer& gameRenderer) {
                                         }
                                         else{
                                             prixEntree = prixLoyer[index];
-                                            std::cout << "prix entree : " << prixEntree << std::endl;
+                                            //std::cout << "prix entree : " << prixEntree << std::endl;
                                         }
 
                                         joueurs.retirerArgent(i, prixEntree);

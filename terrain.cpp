@@ -13,7 +13,7 @@ Terrain::Terrain() {
 }
 
 void Terrain::afficherInfo() const {
-        std::cout << "Terrain : " << m_nom << ", Prix : " << m_prix << ", Occupé : " << (m_estOccupe ? "Oui" : "Non") << ", Construit : " << (m_estConstruit ? "Oui" : "Non") << std::endl;
+        //std::cout << "Terrain : " << m_nom << ", Prix : " << m_prix << ", Occupé : " << (m_estOccupe ? "Oui" : "Non") << ", Construit : " << (m_estConstruit ? "Oui" : "Non") << std::endl;
 }
 
 int Terrain::getTerrainIndex(int numeroCase) const {
@@ -27,12 +27,7 @@ int Terrain::getTerrainIndex(int numeroCase) const {
         return 2;
     } else if (numeroCase >= 20 && numeroCase <= 27) {
         return 3;
-    } 
-    // else if (numeroCase == 12) { //case banque
-    //     return 4;
-    // } else if (numeroCase == 27) { //case mairie
-    //     return 5;
-    // } 
+    }
     return -1;
 }
 

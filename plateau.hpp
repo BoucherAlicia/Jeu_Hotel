@@ -35,7 +35,6 @@ protected:
 
     void initTrackRects();
     void initHotelNames();
-    //void initTerrains();
     void renderTrack();
     void renderHotels();
     void renderDe(int resultat_de, int resultat_de_special);
@@ -43,7 +42,6 @@ protected:
     void renderCases();
     void afficherPion(const Joueur& joueurs) const;
     void renderTerminal(const std::vector<std::string>& phrases);
-    //void renderHotelAffiche(int index);
     void renderHotelAffiche(const std::vector<int>& typeHotel);
     void renderBanqueAffiche();
     void renderMairieAffiche();

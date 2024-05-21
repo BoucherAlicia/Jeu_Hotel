@@ -13,7 +13,7 @@ public:
     int lanceDe() override {
         srand(time(NULL));
         int resultat = rand() % 6 + 1; // Génère un nombre aléatoire entre 1 et 6
-        std::cout << "Le dé normal affiche : " << resultat << std::endl;
+        //std::cout << "Le dé normal affiche : " << resultat << std::endl;
         return resultat;
     }
 };

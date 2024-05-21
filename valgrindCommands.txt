@@ -1,0 +1,7 @@
+Correct with suppression : valgrind --leak-check=full --show-reachable=yes --show-leak-kinds=all --error-limit=no --gen-suppressions=all --log-file=supdata.log ./hotel
+
+
+Without suppression : valgrind --leak-check=full ./main 
+
+
+RUN ON MAIN AND ON CODE CALL STACK DOES NOT POINT TO OUR CODE 
