@@ -21,7 +21,7 @@ terrain.o: terrain.cpp terrain.hpp
 plateau.o: plateau.cpp plateau.hpp
 	$(CPP) $(CPPFLAGS) -c plateau.cpp
 
-jeu.o: jeu.cpp
+jeu.o: jeu.cpp jeu.hpp
 	$(CPP) $(CPPFLAGS) -c jeu.cpp
 
 joueur.o: joueur.cpp joueur.hpp
